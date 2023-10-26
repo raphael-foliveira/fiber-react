@@ -18,5 +18,5 @@ type User struct {
 type UserWithTodos struct {
 	ID    int
 	Email string
-	Todos []Todo
+	Todos []*Todo
 }
