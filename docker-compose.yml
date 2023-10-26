@@ -17,6 +17,8 @@ services:
       DATABASE_URL: 'postgres://postgres:postgres@database/postgres?sslmode=disable'
     depends_on:
       - database
+    volumes:
+      - ./backend:/app
 
   frontend:
     build: ./frontend
@@ -26,3 +28,5 @@ services:
       VITE_API_URL: 'http://backend:3000'
     depends_on:
       - backend
+    volumes:
+      - ./frontend:/app
