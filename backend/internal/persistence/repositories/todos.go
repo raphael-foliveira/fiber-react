@@ -48,32 +48,34 @@ func (t *todos) FindOneById(id int) (*dto.TodoWithUser, error) {
 
 func (t *todos) Create(todo *dto.CreateTodo) (*models.Todo, error) {
 	row := t.db.QueryRow(`
-	INSERT INTO todos 
-		(title, description, completed, user_id) 
-	VALUES 
-		($1, $2, $3, $4) 
-	RETURNING id, title, description, completed, user_id`,
+		INSERT INTO todos 
+			(title, description, completed, user_id) 
+		VALUES 
+			($1, $2, $3, $4) 
+		RETURNING id, title, description, completed, user_id`,
 		todo.Title,
 		todo.Description,
 		false,
-		todo.UserID)
+		todo.UserID,
+	)
 	return scanTodo(row)
 }
 
 func (t *todos) Update(id int, todo *dto.UpdateTodo) (*models.Todo, error) {
 	row := t.db.QueryRow(`
-	UPDATE todos 
-	SET 
-		title = $1, 
-		description = $2, 
-		completed = $3 
-	WHERE 
-		id = $4 
-	RETURNING id, title, description, completed, user_id`,
+		UPDATE todos 
+		SET 
+			title = $1, 
+			description = $2, 
+			completed = $3 
+		WHERE 
+			id = $4 
+		RETURNING id, title, description, completed, user_id`,
 		todo.Title,
 		todo.Description,
 		todo.Completed,
-		id)
+		id,
+	)
 	return scanTodo(row)
 }
 
