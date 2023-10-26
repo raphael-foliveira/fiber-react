@@ -16,6 +16,8 @@ import (
 func Start(db *sql.DB) error {
 	port := os.Getenv("HTTP_PORT")
 	app := fiber.New(appConfig)
+	attachMiddleware(app)
+
 	healthCheckController := controllers.NewHealthCheck()
 	app.Get("/health-check", healthCheckController.HealthCheck)
 
