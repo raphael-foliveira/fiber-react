@@ -1,8 +1,9 @@
 package dto
 
 type CreateUser struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email           string `json:"email"`
+	Password        string `json:"password"`
+	ConfirmPassword string `json:"confirm_password"`
 }
 
 type UpdateUser struct {
