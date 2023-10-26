@@ -1,7 +1,16 @@
 package main
 
-import "github.com/raphael-foliveira/fiber-react/backend/internal/api"
+import (
+	"github.com/raphael-foliveira/fiber-react/backend/internal/api"
+	"github.com/raphael-foliveira/fiber-react/backend/internal/persistence/db"
+)
 
 func main() {
-	api.Start()
+	db, err := db.Connect()
+	if err != nil {
+		panic(err)
+	}
+	if err := api.Start(db); err != nil {
+		panic(err)
+	}
 }
