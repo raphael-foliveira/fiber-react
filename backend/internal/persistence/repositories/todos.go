@@ -19,7 +19,7 @@ type todos struct {
 	db *sql.DB
 }
 
-func NewTodos(db *sql.DB) *todos {
+func NewTodos(db *sql.DB) TodosRepository {
 	return &todos{db}
 }
 
@@ -33,12 +33,17 @@ func (t *todos) Find() ([]*models.Todo, error) {
 	return scanTodos(rows)
 }
 
-func (t *todos) FindOneById(id int) (*models.Todo, error) {
-	row := t.db.QueryRow(
-		"SELECT id, title, description, completed, user_id FROM todos WHERE id = $1",
+func (t *todos) FindOneById(id int) (*dto.TodoWithUser, error) {
+	row := t.db.QueryRow(`
+		SELECT t.id, t.title, t.description, t.completed, u.id, u.email
+		FROM 
+			todos t
+		JOIN 
+			users u ON t.user_id = u.id
+		WHERE id = $1`,
 		id,
 	)
-	return scanTodo(row)
+	return scanTodoWithUser(row)
 }
 
 func (t *todos) Create(todo *dto.CreateTodo) (*models.Todo, error) {
@@ -92,6 +97,14 @@ func scanTodos(rows *sql.Rows) ([]*models.Todo, error) {
 func scanTodo(row *sql.Row) (*models.Todo, error) {
 	var todo models.Todo
 	if err := row.Scan(&todo.ID, &todo.Title, &todo.Description, &todo.Completed, &todo.UserID); err != nil {
+		return nil, err
+	}
+	return &todo, nil
+}
+
+func scanTodoWithUser(row *sql.Row) (*dto.TodoWithUser, error) {
+	var todo dto.TodoWithUser
+	if err := row.Scan(&todo.ID, &todo.Title, &todo.Description, &todo.Completed, &todo.User.ID, &todo.User.Email); err != nil {
 		return nil, err
 	}
 	return &todo, nil
