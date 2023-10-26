@@ -9,6 +9,6 @@ type TodosRepository interface {
 	FindAll() ([]*models.Todo, error)
 	FindById(id int) (*models.Todo, error)
 	Create(todo *dto.CreateTodo) (*models.Todo, error)
-	Update(id int, todo *models.Todo) (*models.Todo, error)
+	Update(id int, todo *dto.UpdateTodo) (*models.Todo, error)
 	Delete(id int) error
 }
