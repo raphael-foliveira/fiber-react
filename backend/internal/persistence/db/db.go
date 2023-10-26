@@ -2,12 +2,15 @@ package db
 
 import (
 	"database/sql"
-	"os"
 
 	_ "github.com/lib/pq"
 )
 
-func Connect() (*sql.DB, error) {
-	databaseUrl := os.Getenv("DATABASE_URL")
-	return sql.Open("postgres", databaseUrl)
+func Connect(databaseUrl string) (*sql.DB, error) {
+	db, err := sql.Open("postgres", databaseUrl)
+	if err != nil {
+		return db, err
+	}
+	_, err = db.Exec(schema)
+	return db, err
 }
