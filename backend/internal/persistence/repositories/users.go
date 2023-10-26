@@ -19,7 +19,7 @@ type users struct {
 	db *sql.DB
 }
 
-func NewUsers(db *sql.DB) *users {
+func NewUsers(db *sql.DB) UsersRepository {
 	return &users{db}
 }
 
