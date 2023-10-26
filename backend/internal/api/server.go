@@ -17,7 +17,7 @@ func Start(db *sql.DB) error {
 	port := os.Getenv("HTTP_PORT")
 	app := fiber.New(appConfig)
 	healthCheckController := controllers.NewHealthCheck()
-	app.Get("/", healthCheckController.HealthCheck)
+	app.Get("/health-check", healthCheckController.HealthCheck)
 
 	app.Group("/api")
 
