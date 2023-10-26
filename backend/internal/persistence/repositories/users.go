@@ -51,32 +51,35 @@ func (u *users) FindOneById(id int) (*dto.UserWithTodos, error) {
 
 func (u *users) Create(user *dto.CreateUser) (*models.User, error) {
 	row := u.db.QueryRow(`
-	INSERT INTO users 
-		(email) 
-	VALUES 
-		($1) 
-	RETURNING id, email`,
-		user.Email)
+		INSERT INTO users 
+			(email) 
+		VALUES 
+			($1) 
+		RETURNING id, email`,
+		user.Email,
+	)
 	return scanUser(row)
 }
 
 func (u *users) Update(id int, user *dto.UpdateUser) (*models.User, error) {
 	row := u.db.QueryRow(`
-	UPDATE users 
-	SET 
-		password = $1
-	WHERE id = $2
-	RETURNING id, email`,
+		UPDATE users 
+		SET 
+			password = $1
+		WHERE id = $2
+		RETURNING id, email`,
 		user.Password,
-		id)
+		id,
+	)
 	return scanUser(row)
 }
 
 func (u *users) Delete(id int) error {
 	_, err := u.db.Exec(`
-	DELETE FROM users 
-	WHERE id = $1`,
-		id)
+		DELETE FROM users 
+		WHERE id = $1`,
+		id,
+	)
 	return err
 }
 
