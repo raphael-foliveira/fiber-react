@@ -17,10 +17,10 @@ services:
       DATABASE_URL: 'postgres://postgres:${POSTGRES_PASSWORD:-postgres}@database/postgres?sslmode=disable'
       TEST_DATABASE_URL: 'postgres://postgres:${POSTGRES_PASSWORD:-postgres}@database/test?sslmode=disable'
       HTTP_PORT: ${HTTP_PORT:-3000}
-    depends_on:
-      - database
     volumes:
       - ./backend:/app
+    depends_on:
+      - database
 
   frontend:
     build: ./frontend
@@ -28,7 +28,7 @@ services:
       - '5173:5173'
     environment:
       VITE_API_URL: 'http://backend:3000'
-    depends_on:
-      - backend
     volumes:
       - ./frontend:/app
+    depends_on:
+      - backend
