@@ -73,3 +73,11 @@ func (a *Auth) RefreshToken(refreshToken *dto.RefreshToken) (string, error) {
 		Email: user.Email,
 	})
 }
+
+func (a *Auth) Authenticate(authorization string) (*dto.User, error) {
+	user, err := a.jwtService.ValidateToken(authorization, false)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}

@@ -4,18 +4,19 @@ import (
 	"errors"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/api/services"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/dto"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/errs"
 )
 
 type Users struct {
-	service    *services.Users
-	jwtService *services.Jwt
+	service     *services.Users
+	authService *services.Auth
 }
 
-func NewUsers(service *services.Users, jwtService *services.Jwt) *Users {
-	return &Users{service, jwtService}
+func NewUsers(service *services.Users, authService *services.Auth) *Users {
+	return &Users{service, authService}
 }
 
 func (u *Users) Find(c *fiber.Ctx) error {
@@ -48,8 +49,9 @@ func (u *Users) Me(c *fiber.Ctx) error {
 	if !ok {
 		return errs.HTTPError{Code: 401, Message: "Unauthorized"}
 	}
-	user, err := u.jwtService.ValidateToken(authorization[0], false)
+	user, err := u.authService.Authenticate(authorization[0])
 	if err != nil {
+		log.Error(err)
 		return errs.HTTPError{Code: 401, Message: "Unauthorized"}
 	}
 	userTodos, err := u.service.FindUserTodos(user.ID)

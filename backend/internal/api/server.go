@@ -32,7 +32,7 @@ func Start(db *sql.DB) error {
 	authService := services.NewAuth(refreshTokensRepository, usersService, jwtService)
 
 	todosController := controllers.NewTodos(todosService)
-	usersController := controllers.NewUsers(usersService, jwtService)
+	usersController := controllers.NewUsers(usersService, authService)
 	authController := controllers.NewAuth(authService)
 
 	routes.Todos(todosController, app)
