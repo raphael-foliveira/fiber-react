@@ -1,8 +1,6 @@
 package services
 
 import (
-	"fmt"
-
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/dto"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/errs"
@@ -48,7 +46,6 @@ func (a *Auth) Login(credentials *dto.Login) (*dto.LoginResponse, error) {
 }
 
 func (a *Auth) Signup(user *dto.CreateUser) (*dto.LoginResponse, error) {
-	fmt.Println(user)
 	if user.Password != user.ConfirmPassword {
 		return nil, errs.HTTPError{Code: 400, Message: "passwords do not match"}
 	}
