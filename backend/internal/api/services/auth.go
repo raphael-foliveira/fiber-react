@@ -8,11 +8,11 @@ import (
 
 type Auth struct {
 	tokensRepository repositories.RefreshTokensRepository
-	usersService     Users
-	jwtService       Jwt
+	usersService     *Users
+	jwtService       *Jwt
 }
 
-func NewAuth(tokensRepository repositories.RefreshTokensRepository, usersService Users, jwtService Jwt) *Auth {
+func NewAuth(tokensRepository repositories.RefreshTokensRepository, usersService *Users, jwtService *Jwt) *Auth {
 	return &Auth{tokensRepository, usersService, jwtService}
 }
 
