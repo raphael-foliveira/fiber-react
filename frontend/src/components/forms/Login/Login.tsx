@@ -1,5 +1,5 @@
-import { Button, Card, TextField, Typography } from '@mui/material';
-import { ButtonWrapper, FieldWrapper } from '../styles';
+import { Button, TextField, Typography } from '@mui/material';
+import { ButtonWrapper, FieldWrapper, FormCard } from '../styles';
 import { useState } from 'react';
 
 export function LoginForm() {
@@ -13,15 +13,7 @@ export function LoginForm() {
 
   return (
     <form action='' onSubmit={handleSubmit}>
-      <Card
-        sx={{
-          display: 'flex',
-          maxWidth: '400px',
-          margin: '100px auto',
-          padding: '20px',
-          flexWrap: 'wrap',
-        }}
-      >
+      <FormCard>
         <Typography
           variant='h4'
           sx={{
@@ -74,7 +66,7 @@ export function LoginForm() {
             Credenciais inválidas. Tente novamente.
           </Typography>
         )}
-      </Card>
+      </FormCard>
     </form>
   );
 }
