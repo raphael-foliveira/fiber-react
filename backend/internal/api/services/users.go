@@ -36,7 +36,7 @@ func (u *Users) FindOneWithTodos(id int) (*dto.UserWithTodos, error) {
 	if err != nil {
 		return nil, err
 	}
-	todos, err := u.todosService.FindByUserId(id)
+	todos, err := u.FindUserTodos(id)
 	if err != nil {
 		return nil, err
 	}
@@ -44,8 +44,16 @@ func (u *Users) FindOneWithTodos(id int) (*dto.UserWithTodos, error) {
 		ID:       user.ID,
 		Email:    user.Email,
 		Username: user.Username,
-		Todos:    dto.TodosFromModels(todos),
+		Todos:    todos,
 	}, err
+}
+
+func (u *Users) FindUserTodos(id int) ([]*dto.Todo, error) {
+	todos, err := u.todosService.FindByUserId(id)
+	if err != nil {
+		return nil, err
+	}
+	return dto.TodosFromModels(todos), nil
 }
 
 func (u *Users) Create(user *dto.CreateUser) (*models.User, error) {

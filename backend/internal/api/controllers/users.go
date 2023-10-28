@@ -52,8 +52,8 @@ func (u *Users) Me(c *fiber.Ctx) error {
 	if err != nil {
 		return errs.HTTPError{Code: 401, Message: "Unauthorized"}
 	}
-	userWithTodos, err := u.service.FindOneWithTodos(user.ID)
-	return c.Status(200).JSON(userWithTodos)
+	userTodos, err := u.service.FindUserTodos(user.ID)
+	return c.Status(200).JSON(userTodos)
 }
 
 func (u *Users) Create(c *fiber.Ctx) error {
