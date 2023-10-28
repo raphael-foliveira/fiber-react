@@ -1,17 +1,10 @@
 import { Button, TextField, Typography } from '@mui/material';
 import { FormEventHandler, useContext, useState } from 'react';
-import { ButtonWrapper, FieldWrapper, FormCard } from '../styles';
-import { authService } from '../../../service/authService';
-import { ValidationError } from '../../../errors/ValidationError';
-import { AuthContext } from '../../../contexts/authContext';
-import { AuthData } from '../../../types/authData';
 import { useNavigate } from 'react-router-dom';
-
-function storeAuthData(authData: AuthData) {
-  localStorage.setItem('user', JSON.stringify(authData.user));
-  localStorage.setItem('accessToken', authData.accessToken);
-  localStorage.setItem('refreshToken', authData.refreshToken);
-}
+import { AuthContext } from '../../../contexts/authContext';
+import { ValidationError } from '../../../errors/ValidationError';
+import { authService } from '../../../service/authService';
+import { ButtonWrapper, FieldWrapper, FormCard } from '../styles';
 
 export function SignupForm() {
   const [email, setEmail] = useState('');
@@ -35,7 +28,6 @@ export function SignupForm() {
         confirm_password: confirmPassword,
       });
       setAuthData(authResponse);
-      storeAuthData(authResponse);
       navigate('/todos');
     } catch (e) {
       console.log({ e });

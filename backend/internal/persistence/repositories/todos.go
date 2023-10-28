@@ -12,6 +12,7 @@ import (
 type TodosRepository interface {
 	Find() ([]*models.Todo, error)
 	FindOneById(id int) (*dto.TodoWithUser, error)
+	FindByUserId(userId int) ([]*models.Todo, error)
 	Create(todo *dto.CreateTodo) (*models.Todo, error)
 	Update(id int, todo *dto.UpdateTodo) (*models.Todo, error)
 	Delete(id int) error
@@ -28,6 +29,17 @@ func NewTodos(db *sql.DB) TodosRepository {
 func (t *todos) Find() ([]*models.Todo, error) {
 	rows, err := t.db.Query(
 		"SELECT id, title, description, completed, user_id FROM todos",
+	)
+	if err != nil {
+		return nil, err
+	}
+	return scanTodos(rows)
+}
+
+func (t *todos) FindByUserId(userId int) ([]*models.Todo, error) {
+	rows, err := t.db.Query(
+		"SELECT id, title, description, completed, user_id FROM todos WHERE user_id = $1",
+		userId,
 	)
 	if err != nil {
 		return nil, err

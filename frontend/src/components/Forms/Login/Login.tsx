@@ -1,15 +1,24 @@
 import { Button, TextField, Typography } from '@mui/material';
-import { ButtonWrapper, FieldWrapper, FormCard } from '../styles';
 import { FormEventHandler, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { authService } from '../../../service/authService';
+import { ButtonWrapper, FieldWrapper, FormCard } from '../styles';
 
 export function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [formError, setFormError] = useState(false);
-  const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
+  const navigate = useNavigate();
+
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
-    setFormError(true);
+    try {
+      await authService.login({ email, password });
+      navigate('/todos');
+    } catch (e) {
+      setFormError(true);
+      return;
+    }
   };
 
   return (

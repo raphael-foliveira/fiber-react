@@ -4,14 +4,16 @@ import (
 	"database/sql"
 	"errors"
 
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/errs"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/models"
 )
 
 type RefreshTokensRepository interface {
 	FindOne(refreshToken string) (*models.RefreshToken, error)
-	Create(refreshToken string, userID int) (*models.RefreshToken, error)
+	Upsert(refreshToken string, userID int) (*models.RefreshToken, error)
 	Delete(refreshToken string) error
+	DeleteByUserId(userID int) error
 }
 
 type refreshTokens struct {
@@ -33,7 +35,11 @@ func (r *refreshTokens) FindOne(refreshToken string) (*models.RefreshToken, erro
 	return scanRefreshToken(row)
 }
 
-func (r *refreshTokens) Create(refreshToken string, userID int) (*models.RefreshToken, error) {
+func (r *refreshTokens) Upsert(refreshToken string, userID int) (*models.RefreshToken, error) {
+	err := r.DeleteByUserId(userID)
+	if err != nil {
+		log.Warn(err)
+	}
 	row := r.db.QueryRow(`
 		INSERT INTO refreshtokens 
 			(token, user_id) 
@@ -52,6 +58,16 @@ func (r *refreshTokens) Delete(refreshToken string) error {
 			refreshtokens
 		WHERE token = $1`,
 		refreshToken,
+	)
+	return err
+}
+
+func (r *refreshTokens) DeleteByUserId(userID int) error {
+	_, err := r.db.Exec(`
+		DELETE FROM
+			refreshtokens
+		WHERE user_id = $1`,
+		userID,
 	)
 	return err
 }

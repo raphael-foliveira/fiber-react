@@ -13,7 +13,6 @@ type UsersRepository interface {
 	Find() ([]*models.User, error)
 	FindOne(id int) (*models.User, error)
 	FindOneByEmail(email string) (*models.User, error)
-	FindOneWithTodos(id int) (*dto.UserWithTodos, error)
 	Create(todo *dto.CreateUser) (*models.User, error)
 	Update(id int, todo *dto.UpdateUser) (*models.User, error)
 	Delete(id int) error
@@ -57,22 +56,6 @@ func (u *users) FindOneByEmail(email string) (*models.User, error) {
 		email,
 	)
 	return scanUser(row)
-}
-
-func (u *users) FindOneWithTodos(id int) (*dto.UserWithTodos, error) {
-	rows, err := u.db.Query(`
-		SELECT u.id, u.email, t.id, t.title, t.description, t.completed
-		FROM 
-			users u
-		LEFT JOIN 
-			todos t ON t.user_id = u.id
-		WHERE u.id = $1`,
-		id,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return scanUserWithTodos(rows)
 }
 
 func (u *users) Create(user *dto.CreateUser) (*models.User, error) {
@@ -130,25 +113,6 @@ func scanUser(row *sql.Row) (*models.User, error) {
 			return nil, errs.NotFoundError{Message: "user not found"}
 		}
 		return nil, err
-	}
-	return &user, nil
-}
-
-func scanUserWithTodos(rows *sql.Rows) (*dto.UserWithTodos, error) {
-	var user dto.UserWithTodos
-	ok := rows.Next()
-	if !ok {
-		return nil, errs.NotFoundError{Message: "user not found"}
-	}
-	if err := rows.Scan(&user.ID, &user.Email, &user.Username); err != nil {
-		return nil, err
-	}
-	for rows.Next() {
-		var todo dto.Todo
-		if err := rows.Scan(&todo.ID, &todo.Title, &todo.Description, &todo.Completed); err != nil {
-			return nil, err
-		}
-		user.Todos = append(user.Todos, &todo)
 	}
 	return &user, nil
 }

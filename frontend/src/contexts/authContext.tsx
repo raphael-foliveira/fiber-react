@@ -5,7 +5,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { AuthData } from '../types/authData';
+import { AuthData } from '../types/auth';
 
 interface AuthContextProps {
   authData: AuthData | undefined;

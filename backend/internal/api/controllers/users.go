@@ -10,11 +10,12 @@ import (
 )
 
 type Users struct {
-	service *services.Users
+	service    *services.Users
+	jwtService *services.Jwt
 }
 
-func NewUsers(service *services.Users) *Users {
-	return &Users{service}
+func NewUsers(service *services.Users, jwtService *services.Jwt) *Users {
+	return &Users{service, jwtService}
 }
 
 func (u *Users) Find(c *fiber.Ctx) error {
@@ -30,7 +31,7 @@ func (u *Users) FindOneById(c *fiber.Ctx) error {
 	if err != nil {
 		return errs.HTTPError{Code: 400, Message: "Invalid id"}
 	}
-	user, err := u.service.FindOneWithTodos(id)
+	user, err := u.service.FindOne(id)
 	if err != nil {
 		var notFoundErr errs.NotFoundError
 		if errors.As(err, &notFoundErr) {
@@ -39,6 +40,20 @@ func (u *Users) FindOneById(c *fiber.Ctx) error {
 		return err
 	}
 	return c.Status(200).JSON(user)
+}
+
+func (u *Users) Me(c *fiber.Ctx) error {
+	headers := c.GetReqHeaders()
+	authorization, ok := headers["Authorization"]
+	if !ok {
+		return errs.HTTPError{Code: 401, Message: "Unauthorized"}
+	}
+	user, err := u.jwtService.ValidateToken(authorization[0], false)
+	if err != nil {
+		return errs.HTTPError{Code: 401, Message: "Unauthorized"}
+	}
+	userWithTodos, err := u.service.FindOneWithTodos(user.ID)
+	return c.Status(200).JSON(userWithTodos)
 }
 
 func (u *Users) Create(c *fiber.Ctx) error {

@@ -1,26 +1,19 @@
 import { apiClient } from '../clients/apiClient';
 import { ValidationError } from '../errors/ValidationError';
-import { AuthData } from '../types/authData';
-
-interface LoginProps {
-  email: string;
-  password: string;
-}
-
-interface SignupProps extends LoginProps {
-  username: string;
-  confirm_password: string;
-}
+import { AuthData, LoginProps, SignupProps } from '../types/auth';
 
 export const authService = {
   login: async (credentials: LoginProps): Promise<AuthData> => {
-    return apiClient.post('/auth/login', credentials);
+    const loginResponse = await apiClient.post('/auth/login', credentials);
+    storeAuthData(loginResponse);
+    return loginResponse;
   },
 
   signup: async (credentials: SignupProps): Promise<AuthData> => {
     validateSignupCredentials(credentials);
-    console.log('trying to hit api');
-    return apiClient.post('/auth/signup', credentials);
+    const signupResponse = await apiClient.post('/auth/signup', credentials);
+    storeAuthData(signupResponse);
+    return signupResponse;
   },
 };
 
@@ -44,4 +37,10 @@ function validateSignupCredentials({
       'Nome de usuário deve ter pelo menos 4 caracteres'
     );
   }
+}
+
+function storeAuthData(authData: AuthData) {
+  localStorage.setItem('user', JSON.stringify(authData.user));
+  localStorage.setItem('accessToken', authData.accessToken);
+  localStorage.setItem('refreshToken', authData.refreshToken);
 }

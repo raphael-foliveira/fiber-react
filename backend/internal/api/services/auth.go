@@ -29,7 +29,7 @@ func (a *Auth) Login(credentials *dto.Login) (*dto.LoginResponse, error) {
 		ID:    user.ID,
 		Email: user.Email,
 	})
-	_, err = a.tokensRepository.Create(tokens.RefreshToken, user.ID)
+	_, err = a.tokensRepository.Upsert(tokens.RefreshToken, user.ID)
 	if err != nil {
 		log.Error(err)
 		return nil, errs.HTTPError{Code: 500, Message: "could not save refresh token"}

@@ -11,5 +11,6 @@ func Users(controller *controllers.Users, app fiber.Router) fiber.Router {
 		users.Get("/:id", controller.FindOneById)
 		users.Post("/", controller.Create)
 		users.Put("/:id", controller.Update)
+		users.Get("/me", controller.Me)
 	})
 }
