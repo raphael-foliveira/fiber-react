@@ -3,8 +3,8 @@ package controllers
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/api/services"
-	"github.com/raphael-foliveira/fiber-react/backend/internal/apperror"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/dto"
+	"github.com/raphael-foliveira/fiber-react/backend/internal/errs"
 )
 
 type Users struct {
@@ -26,7 +26,7 @@ func (u *Users) Find(c *fiber.Ctx) error {
 func (u *Users) FindOneById(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
-		return apperror.HTTPError{Code: 400, Message: "Invalid id"}
+		return errs.HTTPError{Code: 400, Message: "Invalid id"}
 	}
 	user, err := u.service.FindOneWithTodos(id)
 	if err != nil {
@@ -50,7 +50,7 @@ func (u *Users) Create(c *fiber.Ctx) error {
 func (u *Users) Update(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
-		return apperror.HTTPError{Code: 400, Message: "Invalid id"}
+		return errs.HTTPError{Code: 400, Message: "Invalid id"}
 	}
 	updateUser := dto.UpdateUser{}
 	if err := c.BodyParser(&updateUser); err != nil {
@@ -66,7 +66,7 @@ func (u *Users) Update(c *fiber.Ctx) error {
 func (u *Users) Delete(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
-		return apperror.HTTPError{Code: 400, Message: "Invalid id"}
+		return errs.HTTPError{Code: 400, Message: "Invalid id"}
 	}
 	err = u.service.Delete(id)
 	if err != nil {

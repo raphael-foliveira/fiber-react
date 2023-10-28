@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/raphael-foliveira/fiber-react/backend/internal/apperror"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/dto"
+	"github.com/raphael-foliveira/fiber-react/backend/internal/errs"
 )
 
 var accessJwtSecret = []byte(os.Getenv("ACCESS_JWT_SECRET"))
@@ -76,11 +76,11 @@ func (j *Jwt) ValidateToken(token string, isRefreshToken bool) (*dto.User, error
 		return nil, err
 	}
 	if !parsedToken.Valid {
-		return nil, apperror.HTTPError{Code: 401, Message: "invalid token"}
+		return nil, errs.HTTPError{Code: 401, Message: "invalid token"}
 	}
 	claims, ok := parsedToken.Claims.(*JwtClaims)
 	if !ok {
-		return nil, apperror.HTTPError{Code: 401, Message: "invalid token"}
+		return nil, errs.HTTPError{Code: 401, Message: "invalid token"}
 	}
 	return &dto.User{
 		ID:    claims.Sub,

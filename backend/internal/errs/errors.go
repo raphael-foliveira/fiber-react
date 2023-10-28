@@ -1,4 +1,4 @@
-package apperror
+package errs
 
 type HTTPError struct {
 	Code    int
