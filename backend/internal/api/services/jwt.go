@@ -18,13 +18,28 @@ type JwtClaims struct {
 	jwt.RegisteredClaims
 }
 
-type JwtService struct{}
+type Jwt struct{}
 
-func NewJwtService() *JwtService {
-	return &JwtService{}
+func NewJwt() *Jwt {
+	return &Jwt{}
 }
 
-func (j *JwtService) GenerateAccessToken(user *dto.User) (string, error) {
+func (j *Jwt) GenerateTokens(user *dto.User) (*dto.LoginResponse, error) {
+	accessToken, err := j.GenerateAccessToken(user)
+	if err != nil {
+		return nil, err
+	}
+	refreshToken, err := j.GenerateRefreshToken(user)
+	if err != nil {
+		return nil, err
+	}
+	return &dto.LoginResponse{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}, nil
+}
+
+func (j *Jwt) GenerateAccessToken(user *dto.User) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, JwtClaims{
 		user.ID,
 		user.Email,
@@ -37,7 +52,7 @@ func (j *JwtService) GenerateAccessToken(user *dto.User) (string, error) {
 	return token.SignedString(accessJwtSecret)
 }
 
-func (j *JwtService) GenerateRefreshToken(user *dto.User) (string, error) {
+func (j *Jwt) GenerateRefreshToken(user *dto.User) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, JwtClaims{
 		user.ID,
 		user.Email,
@@ -50,7 +65,7 @@ func (j *JwtService) GenerateRefreshToken(user *dto.User) (string, error) {
 	return token.SignedString(refreshJwtSecret)
 }
 
-func (j *JwtService) ValidateToken(token string, isRefreshToken bool) (*dto.User, error) {
+func (j *Jwt) ValidateToken(token string, isRefreshToken bool) (*dto.User, error) {
 	parsedToken, err := jwt.ParseWithClaims(token, &JwtClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if isRefreshToken {
 			return refreshJwtSecret, nil

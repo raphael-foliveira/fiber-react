@@ -22,6 +22,10 @@ func (u *Users) FindOneByEmail(email string) (*models.User, error) {
 	return u.repository.FindOneByEmail(email)
 }
 
+func (u *Users) FindOne(id int) (*models.User, error) {
+	return u.repository.FindOne(id)
+}
+
 func (u *Users) FindOneWithTodos(id int) (*dto.UserWithTodos, error) {
 	return u.repository.FindOneWithTodos(id)
 }

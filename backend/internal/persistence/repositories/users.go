@@ -9,6 +9,7 @@ import (
 
 type UsersRepository interface {
 	Find() ([]*models.User, error)
+	FindOne(id int) (*models.User, error)
 	FindOneByEmail(email string) (*models.User, error)
 	FindOneWithTodos(id int) (*dto.UserWithTodos, error)
 	Create(todo *dto.CreateUser) (*models.User, error)
@@ -32,6 +33,17 @@ func (u *users) Find() ([]*models.User, error) {
 		return nil, err
 	}
 	return scanUsers(rows)
+}
+
+func (u *users) FindOne(id int) (*models.User, error) {
+	row := u.db.QueryRow(`
+		SELECT id, email
+		FROM
+			users
+		WHERE id = $1`,
+		id,
+	)
+	return scanUser(row)
 }
 
 func (u *users) FindOneByEmail(email string) (*models.User, error) {
