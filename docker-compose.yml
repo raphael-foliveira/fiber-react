@@ -17,6 +17,8 @@ services:
       DATABASE_URL: 'postgres://postgres:${POSTGRES_PASSWORD:-postgres}@database/postgres?sslmode=disable'
       TEST_DATABASE_URL: 'postgres://postgres:${POSTGRES_PASSWORD:-postgres}@database/test?sslmode=disable'
       HTTP_PORT: ${HTTP_PORT:-3000}
+      ACCESS_JWT_SECRET: ${ACCESS_JWT_SECRET:-access_super_secret}
+      REFRESH_JWT_SECRET: ${REFRESH_JWT_SECRET:-refresh_super_secret}
     volumes:
       - ./backend:/app
     depends_on:
