@@ -2,7 +2,9 @@ package repositories
 
 import (
 	"database/sql"
+	"errors"
 
+	"github.com/raphael-foliveira/fiber-react/backend/internal/errs"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/models"
 )
 
@@ -24,7 +26,7 @@ func (r *refreshTokens) FindOne(refreshToken string) (*models.RefreshToken, erro
 	row := r.db.QueryRow(`
 		SELECT user_id
 		FROM 
-			refresh_tokens
+			refreshtokens
 		WHERE token = $1`,
 		refreshToken,
 	)
@@ -33,11 +35,11 @@ func (r *refreshTokens) FindOne(refreshToken string) (*models.RefreshToken, erro
 
 func (r *refreshTokens) Create(refreshToken string, userID int) (*models.RefreshToken, error) {
 	row := r.db.QueryRow(`
-		INSERT INTO refresh_tokens 
+		INSERT INTO refreshtokens 
 			(token, user_id) 
 		VALUES 
 			($1, $2)
-		RETURNING id, token`,
+		RETURNING id, token, user_id`,
 		refreshToken,
 		userID,
 	)
@@ -47,7 +49,7 @@ func (r *refreshTokens) Create(refreshToken string, userID int) (*models.Refresh
 func (r *refreshTokens) Delete(refreshToken string) error {
 	_, err := r.db.Exec(`
 		DELETE FROM
-			refresh_tokens
+			refreshtokens
 		WHERE token = $1`,
 		refreshToken,
 	)
@@ -58,6 +60,9 @@ func scanRefreshToken(row *sql.Row) (*models.RefreshToken, error) {
 	var token models.RefreshToken
 	err := row.Scan(&token.ID, &token.Token, &token.UserID)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, errs.NotFoundError{Message: "token not found"}
+		}
 		return nil, err
 	}
 	return &token, nil

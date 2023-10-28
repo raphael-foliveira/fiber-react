@@ -11,4 +11,8 @@ export const HomeButtonsContainer = styled(Box)`
   justify-content: space-between;
   max-width: 400px;
   margin: 0 auto;
+
+  .MuiButtonBase-root {
+    width: 140px;
+  }
 `;

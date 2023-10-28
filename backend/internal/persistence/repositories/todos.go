@@ -2,8 +2,10 @@ package repositories
 
 import (
 	"database/sql"
+	"errors"
 
 	"github.com/raphael-foliveira/fiber-react/backend/internal/dto"
+	"github.com/raphael-foliveira/fiber-react/backend/internal/errs"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/models"
 )
 
@@ -99,6 +101,9 @@ func scanTodos(rows *sql.Rows) ([]*models.Todo, error) {
 func scanTodo(row *sql.Row) (*models.Todo, error) {
 	var todo models.Todo
 	if err := row.Scan(&todo.ID, &todo.Title, &todo.Description, &todo.Completed, &todo.UserID); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, errs.NotFoundError{Message: "todo not found"}
+		}
 		return nil, err
 	}
 	return &todo, nil

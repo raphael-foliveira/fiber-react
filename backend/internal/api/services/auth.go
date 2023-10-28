@@ -1,6 +1,9 @@
 package services
 
 import (
+	"fmt"
+
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/dto"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/errs"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/persistence/repositories"
@@ -30,19 +33,22 @@ func (a *Auth) Login(credentials *dto.Login) (*dto.LoginResponse, error) {
 	})
 	_, err = a.tokensRepository.Create(tokens.RefreshToken, user.ID)
 	if err != nil {
+		log.Error(err)
 		return nil, errs.HTTPError{Code: 500, Message: "could not save refresh token"}
 	}
 	return &dto.LoginResponse{
 		AccessToken:  tokens.AccessToken,
 		RefreshToken: tokens.RefreshToken,
 		User: &dto.User{
-			ID:    user.ID,
-			Email: user.Email,
+			ID:       user.ID,
+			Email:    user.Email,
+			Username: user.Username,
 		},
 	}, nil
 }
 
 func (a *Auth) Signup(user *dto.CreateUser) (*dto.LoginResponse, error) {
+	fmt.Println(user)
 	if user.Password != user.ConfirmPassword {
 		return nil, errs.HTTPError{Code: 400, Message: "passwords do not match"}
 	}

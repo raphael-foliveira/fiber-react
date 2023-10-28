@@ -14,8 +14,12 @@ func NewUsers(repository repositories.UsersRepository) *Users {
 	return &Users{repository}
 }
 
-func (u *Users) Find() ([]*models.User, error) {
-	return u.repository.Find()
+func (u *Users) Find() ([]*dto.User, error) {
+	users, err := u.repository.Find()
+	if err != nil {
+		return nil, err
+	}
+	return dto.UsersFromModels(users), nil
 }
 
 func (u *Users) FindOneByEmail(email string) (*models.User, error) {

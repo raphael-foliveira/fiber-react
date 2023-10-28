@@ -31,7 +31,11 @@ func (a *Auth) Signup(c *fiber.Ctx) error {
 	if err := c.BodyParser(&user); err != nil {
 		return err
 	}
-	return c.Status(201).JSON(&user)
+	loginResponse, err := a.service.Signup(&user)
+	if err != nil {
+		return err
+	}
+	return c.Status(201).JSON(loginResponse)
 }
 
 func (a *Auth) RefreshToken(c *fiber.Ctx) error {

@@ -1,12 +1,13 @@
 import { Button, TextField, Typography } from '@mui/material';
 import { ButtonWrapper, FieldWrapper, FormCard } from '../styles';
-import { useState } from 'react';
+import { FormEventHandler, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [formError, setFormError] = useState(false);
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
     setFormError(true);
   };
@@ -14,16 +15,7 @@ export function LoginForm() {
   return (
     <form action='' onSubmit={handleSubmit}>
       <FormCard>
-        <Typography
-          variant='h4'
-          sx={{
-            textAlign: 'center',
-            width: '100%',
-            marginBottom: '20px',
-          }}
-        >
-          Login
-        </Typography>
+        <Typography variant='h4'>Login</Typography>
         <FieldWrapper>
           <TextField
             label='Email'
@@ -50,9 +42,11 @@ export function LoginForm() {
           <Button variant='contained' type='submit'>
             Login
           </Button>
-          <Button variant='contained' type='button'>
-            Cadastre-se
-          </Button>
+          <Link to='/signup'>
+            <Button variant='contained' type='button'>
+              Cadastre-se
+            </Button>
+          </Link>
         </ButtonWrapper>
         {formError && (
           <Typography
