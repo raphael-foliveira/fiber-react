@@ -24,15 +24,22 @@ func (a *Auth) Login(credentials *dto.Login) (*dto.LoginResponse, error) {
 	if user.Password != credentials.Password {
 		return nil, errs.HTTPError{Code: 401, Message: "invalid credentials"}
 	}
-	loginResponse, err := a.jwtService.GenerateTokens(&dto.User{
+	tokens, err := a.jwtService.GenerateTokens(&dto.User{
 		ID:    user.ID,
 		Email: user.Email,
 	})
-	_, err = a.tokensRepository.Create(loginResponse.RefreshToken, user.ID)
+	_, err = a.tokensRepository.Create(tokens.RefreshToken, user.ID)
 	if err != nil {
 		return nil, errs.HTTPError{Code: 500, Message: "could not save refresh token"}
 	}
-	return loginResponse, nil
+	return &dto.LoginResponse{
+		AccessToken:  tokens.AccessToken,
+		RefreshToken: tokens.RefreshToken,
+		User: &dto.User{
+			ID:    user.ID,
+			Email: user.Email,
+		},
+	}, nil
 }
 
 func (a *Auth) Signup(user *dto.CreateUser) (*dto.LoginResponse, error) {

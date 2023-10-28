@@ -24,7 +24,7 @@ func NewJwt() *Jwt {
 	return &Jwt{}
 }
 
-func (j *Jwt) GenerateTokens(user *dto.User) (*dto.LoginResponse, error) {
+func (j *Jwt) GenerateTokens(user *dto.User) (*dto.Tokens, error) {
 	accessToken, err := j.GenerateAccessToken(user)
 	if err != nil {
 		return nil, err
@@ -33,7 +33,7 @@ func (j *Jwt) GenerateTokens(user *dto.User) (*dto.LoginResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &dto.LoginResponse{
+	return &dto.Tokens{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}, nil
