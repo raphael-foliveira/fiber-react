@@ -31,6 +31,6 @@ services:
     environment:
       VITE_API_URL: 'http://backend:3000'
     volumes:
-      - ./frontend:/app
+      - ./frontend/src:/app/src
     depends_on:
       - backend

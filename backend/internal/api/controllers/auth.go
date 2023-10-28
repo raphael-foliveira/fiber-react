@@ -6,15 +6,15 @@ import (
 	"github.com/raphael-foliveira/fiber-react/backend/internal/dto"
 )
 
-type auth struct {
-	service services.Auth
+type Auth struct {
+	service *services.Auth
 }
 
-func NewAuth(service services.Auth) *auth {
-	return &auth{service}
+func NewAuth(service *services.Auth) *Auth {
+	return &Auth{service}
 }
 
-func (a *auth) Login(c *fiber.Ctx) error {
+func (a *Auth) Login(c *fiber.Ctx) error {
 	credentials := dto.Login{}
 	if err := c.BodyParser(&credentials); err != nil {
 		return err
@@ -26,7 +26,7 @@ func (a *auth) Login(c *fiber.Ctx) error {
 	return c.Status(200).JSON(loginResponse)
 }
 
-func (a *auth) Signup(c *fiber.Ctx) error {
+func (a *Auth) Signup(c *fiber.Ctx) error {
 	user := dto.CreateUser{}
 	if err := c.BodyParser(&user); err != nil {
 		return err
@@ -34,7 +34,7 @@ func (a *auth) Signup(c *fiber.Ctx) error {
 	return c.Status(201).JSON(&user)
 }
 
-func (a *auth) RefreshToken(c *fiber.Ctx) error {
+func (a *Auth) RefreshToken(c *fiber.Ctx) error {
 	refreshToken := dto.RefreshToken{}
 	if err := c.BodyParser(&refreshToken); err != nil {
 		return err

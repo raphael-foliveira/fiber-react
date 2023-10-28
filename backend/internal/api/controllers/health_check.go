@@ -2,13 +2,13 @@ package controllers
 
 import "github.com/gofiber/fiber/v2"
 
-type healthCheck struct{}
+type HealthCheck struct{}
 
-func NewHealthCheck() *healthCheck {
-	return &healthCheck{}
+func NewHealthCheck() *HealthCheck {
+	return &HealthCheck{}
 }
 
-func (hc *healthCheck) HealthCheck(c *fiber.Ctx) error {
+func (hc *HealthCheck) HealthCheck(c *fiber.Ctx) error {
 	return c.Status(200).JSON(fiber.Map{
 		"status": "ok",
 	})

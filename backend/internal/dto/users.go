@@ -11,12 +11,12 @@ type UpdateUser struct {
 }
 
 type User struct {
-	ID    int
-	Email string
+	ID    int    `json:"id"`
+	Email string `json:"email"`
 }
 
 type UserWithTodos struct {
-	ID    int
-	Email string
-	Todos []*Todo
+	ID    int     `json:"id"`
+	Email string  `json:"email"`
+	Todos []*Todo `json:"todos"`
 }
