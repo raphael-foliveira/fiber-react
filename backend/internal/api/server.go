@@ -11,7 +11,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/api/controllers"
-	"github.com/raphael-foliveira/fiber-react/backend/internal/apperror"
+	"github.com/raphael-foliveira/fiber-react/backend/internal/errs"
 )
 
 func Start(db *sql.DB) error {
@@ -40,7 +40,7 @@ var appConfig = fiber.Config{
 func errorHandler(c *fiber.Ctx, err error) error {
 	code := fiber.StatusInternalServerError
 	var fiberErr *fiber.Error
-	var httpErr *apperror.HTTPError
+	var httpErr *errs.HTTPError
 	if errors.As(err, &fiberErr) {
 		code = fiberErr.Code
 	}

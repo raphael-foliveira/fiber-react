@@ -1,8 +1,8 @@
 package services
 
 import (
-	"github.com/raphael-foliveira/fiber-react/backend/internal/apperror"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/dto"
+	"github.com/raphael-foliveira/fiber-react/backend/internal/errs"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/persistence/repositories"
 )
 
@@ -22,7 +22,7 @@ func (a *Auth) Login(credentials *dto.Login) (*dto.LoginResponse, error) {
 		return nil, err
 	}
 	if user.Password != credentials.Password {
-		return nil, apperror.HTTPError{Code: 401, Message: "invalid credentials"}
+		return nil, errs.HTTPError{Code: 401, Message: "invalid credentials"}
 	}
 	loginResponse, err := a.jwtService.GenerateTokens(&dto.User{
 		ID:    user.ID,
@@ -30,14 +30,14 @@ func (a *Auth) Login(credentials *dto.Login) (*dto.LoginResponse, error) {
 	})
 	_, err = a.tokensRepository.Create(loginResponse.RefreshToken, user.ID)
 	if err != nil {
-		return nil, apperror.HTTPError{Code: 500, Message: "could not save refresh token"}
+		return nil, errs.HTTPError{Code: 500, Message: "could not save refresh token"}
 	}
 	return loginResponse, nil
 }
 
 func (a *Auth) Signup(user *dto.CreateUser) (*dto.LoginResponse, error) {
 	if user.Password != user.ConfirmPassword {
-		return nil, apperror.HTTPError{Code: 400, Message: "passwords do not match"}
+		return nil, errs.HTTPError{Code: 400, Message: "passwords do not match"}
 	}
 	newUser, err := a.usersService.Create(user)
 	if err != nil {
@@ -52,7 +52,7 @@ func (a *Auth) Signup(user *dto.CreateUser) (*dto.LoginResponse, error) {
 func (a *Auth) RefreshToken(refreshToken *dto.RefreshToken) (string, error) {
 	token, err := a.tokensRepository.FindOne(refreshToken.Token)
 	if err != nil {
-		return "", apperror.HTTPError{Code: 401, Message: "invalid refresh token"}
+		return "", errs.HTTPError{Code: 401, Message: "invalid refresh token"}
 	}
 	user, err := a.usersService.FindOne(token.UserID)
 	if err != nil {
