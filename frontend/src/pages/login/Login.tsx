@@ -10,6 +10,7 @@ export function Login() {
   useDocumentTitle('Login');
   const { isLoggedIn } = useSession();
   const navigate = useNavigate();
+
   useEffect(() => {
     if (isLoggedIn) {
       navigate('/todos');

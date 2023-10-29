@@ -22,7 +22,10 @@ export default function Navbar() {
           </Typography>
         </Link>
         {authData.isLoggedIn && (
-          <Button color={'inherit'} onClick={handleLogout}>
+          <Button
+            onClick={handleLogout}
+            sx={{ color: 'inherit', marginLeft: 'auto' }}
+          >
             Logout
           </Button>
         )}
