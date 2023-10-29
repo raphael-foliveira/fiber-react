@@ -9,6 +9,7 @@ export function useSession() {
   useEffect(() => {
     if (!authData.isLoggedIn) {
       navigate('/login');
+      return;
     }
   }, [navigate, authData]);
 

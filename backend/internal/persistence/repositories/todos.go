@@ -28,7 +28,7 @@ func NewTodos(db *sql.DB) TodosRepository {
 
 func (t *todos) Find() ([]*models.Todo, error) {
 	rows, err := t.db.Query(
-		"SELECT id, title, description, completed, user_id FROM todos",
+		"SELECT id, title, description, completed, user_id, created_at, completed_at FROM todos",
 	)
 	if err != nil {
 		return nil, err
@@ -38,7 +38,7 @@ func (t *todos) Find() ([]*models.Todo, error) {
 
 func (t *todos) FindByUserId(userId int) ([]*models.Todo, error) {
 	rows, err := t.db.Query(
-		"SELECT id, title, description, completed, user_id FROM todos WHERE user_id = $1",
+		"SELECT id, title, description, completed, user_id, created_at, completed_at FROM todos WHERE user_id = $1",
 		userId,
 	)
 	if err != nil {
@@ -49,12 +49,12 @@ func (t *todos) FindByUserId(userId int) ([]*models.Todo, error) {
 
 func (t *todos) FindOneById(id int) (*dto.TodoWithUser, error) {
 	row := t.db.QueryRow(`
-		SELECT t.id, t.title, t.description, t.completed, u.id, u.email
+		SELECT t.id, t.title, t.description, t.completed, t.created_at, t.completed_at, u.id, u.email, u.username
 		FROM 
 			todos t
 		JOIN 
 			users u ON t.user_id = u.id
-		WHERE id = $1`,
+		WHERE t.id = $1`,
 		id,
 	)
 	return scanTodoWithUser(row)
@@ -66,7 +66,7 @@ func (t *todos) Create(todo *dto.CreateTodo) (*models.Todo, error) {
 			(title, description, completed, user_id) 
 		VALUES 
 			($1, $2, $3, $4) 
-		RETURNING id, title, description, completed, user_id`,
+		RETURNING id, title, description, completed, user_id, created_at, completed_at`,
 		todo.Title,
 		todo.Description,
 		false,
@@ -81,10 +81,12 @@ func (t *todos) Update(id int, todo *dto.UpdateTodo) (*models.Todo, error) {
 		SET 
 			title = $1, 
 			description = $2, 
-			completed = $3 
+			completed = $3, 
+			completed_at = CASE WHEN $3 = true THEN CURRENT_TIMESTAMP ELSE NULL END
 		WHERE 
 			id = $4 
-		RETURNING id, title, description, completed, user_id`,
+		RETURNING id, title, description, completed, user_id, created_at, completed_at
+		`,
 		todo.Title,
 		todo.Description,
 		todo.Completed,
@@ -102,7 +104,15 @@ func scanTodos(rows *sql.Rows) ([]*models.Todo, error) {
 	todos := []*models.Todo{}
 	for rows.Next() {
 		var todo models.Todo
-		if err := rows.Scan(&todo.ID, &todo.Title, &todo.Description, &todo.Completed, &todo.UserID); err != nil {
+		if err := rows.Scan(
+			&todo.ID,
+			&todo.Title,
+			&todo.Description,
+			&todo.Completed,
+			&todo.UserID,
+			&todo.CreatedAt,
+			&todo.CompletedAt,
+		); err != nil {
 			return nil, err
 		}
 		todos = append(todos, &todo)
@@ -112,7 +122,14 @@ func scanTodos(rows *sql.Rows) ([]*models.Todo, error) {
 
 func scanTodo(row *sql.Row) (*models.Todo, error) {
 	var todo models.Todo
-	if err := row.Scan(&todo.ID, &todo.Title, &todo.Description, &todo.Completed, &todo.UserID); err != nil {
+	if err := row.Scan(
+		&todo.ID,
+		&todo.Title,
+		&todo.Description,
+		&todo.Completed,
+		&todo.UserID,
+		&todo.CreatedAt,
+		&todo.CompletedAt); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, errs.NotFoundError{Message: "todo not found"}
 		}
@@ -123,7 +140,17 @@ func scanTodo(row *sql.Row) (*models.Todo, error) {
 
 func scanTodoWithUser(row *sql.Row) (*dto.TodoWithUser, error) {
 	var todo dto.TodoWithUser
-	if err := row.Scan(&todo.ID, &todo.Title, &todo.Description, &todo.Completed, &todo.User.ID, &todo.User.Email); err != nil {
+	if err := row.Scan(
+		&todo.ID,
+		&todo.Title,
+		&todo.Description,
+		&todo.Completed,
+		&todo.CreatedAt,
+		&todo.CompletedAt,
+		&todo.User.ID,
+		&todo.User.Email,
+		&todo.User.Username,
+	); err != nil {
 		return nil, err
 	}
 	return &todo, nil
