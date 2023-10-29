@@ -6,7 +6,7 @@ import { ValidationError } from '../../../errors/ValidationError';
 import { authService } from '../../../service/authService';
 import { ButtonWrapper, FieldWrapper, FormCard } from '../styles';
 
-export function SignupForm() {
+export default function SignupForm() {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');

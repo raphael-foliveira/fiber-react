@@ -26,8 +26,9 @@ func (a *Auth) Login(credentials *dto.Login) (*dto.LoginResponse, error) {
 		return nil, errs.HTTPError{Code: 401, Message: "invalid credentials"}
 	}
 	tokens, err := a.jwtService.GenerateTokens(&dto.User{
-		ID:    user.ID,
-		Email: user.Email,
+		ID:       user.ID,
+		Email:    user.Email,
+		Username: user.Username,
 	})
 	_, err = a.tokensRepository.Upsert(tokens.RefreshToken, user.ID)
 	if err != nil {

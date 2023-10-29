@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../../../service/authService';
 import { ButtonWrapper, FieldWrapper, FormCard } from '../styles';
 
-export function LoginForm() {
+export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [formError, setFormError] = useState(false);

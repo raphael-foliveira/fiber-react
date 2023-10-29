@@ -1,7 +1,14 @@
-import { SignupForm } from '../../components/Forms/Signup/Signup';
+import { Suspense, lazy } from 'react';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
+import Loading from '../../components/Loading/Loading';
+
+const SignupForm = lazy(() => import('../../components/Forms/Signup/Signup'));
 
 export function Signup() {
   useDocumentTitle('Signup');
-  return <SignupForm />;
+  return (
+    <Suspense fallback={<Loading />}>
+      <SignupForm />
+    </Suspense>
+  );
 }
