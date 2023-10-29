@@ -85,7 +85,7 @@ func (t *todos) Update(id int, todo *dto.UpdateTodo) (*models.Todo, error) {
 			completed_at = CASE WHEN $3 = true THEN CURRENT_TIMESTAMP ELSE NULL END
 		WHERE 
 			id = $4 
-		RETURNING id, title, description, completed, user_id`,
+		RETURNING id, title, description, completed, user_id, created_at, completed_at`,
 		todo.Title,
 		todo.Description,
 		todo.Completed,

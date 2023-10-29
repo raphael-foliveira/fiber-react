@@ -1,9 +1,8 @@
-import { Typography, TextField, Button } from '@mui/material';
-import { ButtonWrapper, FieldWrapper, FormCard } from '../styles';
+import { Button, TextField, Typography } from '@mui/material';
 import { FormEventHandler, useState } from 'react';
 import { useSession } from '../../../hooks/useSession';
 import { todosService } from '../../../service/todosService';
-import { HttpError } from '../../../errors/HttpError';
+import { ButtonWrapper, FieldWrapper, FormCard } from '../styles';
 
 export default function CreateTodoForm() {
   const { accessToken } = useSession();
@@ -20,10 +19,11 @@ export default function CreateTodoForm() {
       await todosService.createTodo({ title, description }, accessToken);
     } catch (err) {
       setFormError(true);
-      if (err instanceof HttpError) {
+      if (err instanceof Error) {
         setFormErrorMessage(err.message);
         return;
       }
+      setFormErrorMessage('Erro inesperado. Tente novamente.');
     }
   };
 

@@ -9,9 +9,21 @@ import {
 
 export const authService = {
   login: async (credentials: LoginProps): Promise<AuthData> => {
-    const loginResponse = await apiClient.post('/auth/login', credentials);
-    storeAuthData(loginResponse);
-    return loginResponse;
+    const { access_token, refresh_token, user } = await apiClient.post(
+      '/auth/login',
+      credentials
+    );
+    storeAuthData({ access_token, refresh_token, user });
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+      },
+      accessToken: access_token,
+      refreshToken: refresh_token,
+      isLoggedIn: true,
+    };
   },
 
   signup: async (credentials: SignupProps): Promise<AuthData> => {
@@ -19,6 +31,12 @@ export const authService = {
     const signupResponse = await apiClient.post('/auth/signup', credentials);
     storeAuthData(signupResponse);
     return signupResponse;
+  },
+
+  logout: () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
   },
 };
 

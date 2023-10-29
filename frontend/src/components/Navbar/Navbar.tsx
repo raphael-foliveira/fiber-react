@@ -1,28 +1,31 @@
-import { AppBar, IconButton, Toolbar, Typography } from '@mui/material';
+import { AppBar, Button, Toolbar, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { useSession } from '../../hooks/useSession';
-import { useEffect } from 'react';
+import { useContext } from 'react';
+import { AuthContext } from '../../contexts/authContext';
 
 export default function Navbar() {
-  const authData = useSession();
+  const { authData, setAuthData } = useContext(AuthContext);
 
-  useEffect(() => {});
+  const handleLogout = () => {
+    setAuthData({ isLoggedIn: false });
+    localStorage.removeItem('user');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+  };
+
   return (
     <AppBar position='static'>
       <Toolbar>
-        <IconButton
-          size='large'
-          edge='start'
-          color='inherit'
-          aria-label='menu'
-          sx={{ mr: 2 }}
-        ></IconButton>
         <Link to='/'>
           <Typography variant='h6' sx={{ cursor: 'pointer' }}>
             Home
           </Typography>
-          {authData.isLoggedIn && <Typography variant='h6'>Logout</Typography>}
         </Link>
+        {authData.isLoggedIn && (
+          <Button color={'inherit'} onClick={handleLogout}>
+            Logout
+          </Button>
+        )}
       </Toolbar>
     </AppBar>
   );
