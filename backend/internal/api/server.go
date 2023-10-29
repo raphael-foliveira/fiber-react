@@ -27,16 +27,16 @@ func Start(db *sql.DB) error {
 	refreshTokensRepository := repositories.NewRefreshTokens(db)
 
 	todosService := services.NewTodos(todosRepository)
-	usersService := services.NewUsers(usersRepository)
+	usersService := services.NewUsers(usersRepository, todosService)
 	jwtService := services.NewJwt()
 	authService := services.NewAuth(refreshTokensRepository, usersService, jwtService)
 
 	todosController := controllers.NewTodos(todosService)
-	usersController := controllers.NewUsers(usersService)
+	usersController := controllers.NewUsers(usersService, authService)
 	authController := controllers.NewAuth(authService)
 
 	routes.Todos(todosController, app)
-	routes.Users(usersController, app)
+	routes.Users(usersController, authController, app)
 	routes.Auth(authController, app)
 
 	healthCheckController := controllers.NewHealthCheck()
@@ -59,7 +59,7 @@ var appConfig = fiber.Config{
 func errorHandler(c *fiber.Ctx, err error) error {
 	code := fiber.StatusInternalServerError
 	var fiberErr *fiber.Error
-	var httpErr *errs.HTTPError
+	var httpErr errs.HTTPError
 	if errors.As(err, &fiberErr) {
 		code = fiberErr.Code
 	}

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/dto"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/errs"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/persistence/repositories"
@@ -25,19 +26,22 @@ func (a *Auth) Login(credentials *dto.Login) (*dto.LoginResponse, error) {
 		return nil, errs.HTTPError{Code: 401, Message: "invalid credentials"}
 	}
 	tokens, err := a.jwtService.GenerateTokens(&dto.User{
-		ID:    user.ID,
-		Email: user.Email,
+		ID:       user.ID,
+		Email:    user.Email,
+		Username: user.Username,
 	})
-	_, err = a.tokensRepository.Create(tokens.RefreshToken, user.ID)
+	_, err = a.tokensRepository.Upsert(tokens.RefreshToken, user.ID)
 	if err != nil {
+		log.Error(err)
 		return nil, errs.HTTPError{Code: 500, Message: "could not save refresh token"}
 	}
 	return &dto.LoginResponse{
 		AccessToken:  tokens.AccessToken,
 		RefreshToken: tokens.RefreshToken,
 		User: &dto.User{
-			ID:    user.ID,
-			Email: user.Email,
+			ID:       user.ID,
+			Email:    user.Email,
+			Username: user.Username,
 		},
 	}, nil
 }
@@ -69,4 +73,12 @@ func (a *Auth) RefreshToken(refreshToken *dto.RefreshToken) (string, error) {
 		ID:    user.ID,
 		Email: user.Email,
 	})
+}
+
+func (a *Auth) Authenticate(authorization string) (*dto.User, error) {
+	user, err := a.jwtService.ValidateToken(authorization, false)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }

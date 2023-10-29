@@ -22,6 +22,10 @@ func (t *Todos) FindOneById(id int) (*dto.TodoWithUser, error) {
 	return t.repository.FindOneById(id)
 }
 
+func (t *Todos) FindByUserId(userId int) ([]*models.Todo, error) {
+	return t.repository.FindByUserId(userId)
+}
+
 func (t *Todos) Create(todo *dto.CreateTodo) (*models.Todo, error) {
 	return t.repository.Create(todo)
 }

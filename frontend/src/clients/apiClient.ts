@@ -1,3 +1,5 @@
+import { HttpError } from '../errors/HttpError';
+
 const BASE_URL = import.meta.env.VITE_API_URL;
 const defaultHeaders = {
   'Content-Type': 'application/json',
@@ -56,7 +58,8 @@ export const apiClient = {
 async function fetchWithConfig(endpoint: string, config: RequestInit = {}) {
   const response = await fetch(BASE_URL + endpoint, config);
   if (!response.ok) {
-    throw new Error(response.statusText);
+    console.log(await response.text());
+    throw new HttpError(response.statusText, response.status);
   }
   return response.json();
 }

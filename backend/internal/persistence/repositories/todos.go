@@ -2,14 +2,17 @@ package repositories
 
 import (
 	"database/sql"
+	"errors"
 
 	"github.com/raphael-foliveira/fiber-react/backend/internal/dto"
+	"github.com/raphael-foliveira/fiber-react/backend/internal/errs"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/models"
 )
 
 type TodosRepository interface {
 	Find() ([]*models.Todo, error)
 	FindOneById(id int) (*dto.TodoWithUser, error)
+	FindByUserId(userId int) ([]*models.Todo, error)
 	Create(todo *dto.CreateTodo) (*models.Todo, error)
 	Update(id int, todo *dto.UpdateTodo) (*models.Todo, error)
 	Delete(id int) error
@@ -26,6 +29,17 @@ func NewTodos(db *sql.DB) TodosRepository {
 func (t *todos) Find() ([]*models.Todo, error) {
 	rows, err := t.db.Query(
 		"SELECT id, title, description, completed, user_id FROM todos",
+	)
+	if err != nil {
+		return nil, err
+	}
+	return scanTodos(rows)
+}
+
+func (t *todos) FindByUserId(userId int) ([]*models.Todo, error) {
+	rows, err := t.db.Query(
+		"SELECT id, title, description, completed, user_id FROM todos WHERE user_id = $1",
+		userId,
 	)
 	if err != nil {
 		return nil, err
@@ -99,6 +113,9 @@ func scanTodos(rows *sql.Rows) ([]*models.Todo, error) {
 func scanTodo(row *sql.Row) (*models.Todo, error) {
 	var todo models.Todo
 	if err := row.Scan(&todo.ID, &todo.Title, &todo.Description, &todo.Completed, &todo.UserID); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, errs.NotFoundError{Message: "todo not found"}
+		}
 		return nil, err
 	}
 	return &todo, nil
