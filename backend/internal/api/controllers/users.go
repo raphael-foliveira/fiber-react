@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/api/services"
@@ -48,8 +47,14 @@ func (u *Users) FindUserTodos(c *fiber.Ctx) error {
 	if err != nil {
 		return errs.HTTPError{Code: 400, Message: "Invalid id"}
 	}
-	fmt.Println(c.Context().Value("user"))
 	userTodos, err := u.service.FindUserTodos(id)
+	if err != nil {
+		var notFoundErr errs.NotFoundError
+		if errors.As(err, &notFoundErr) {
+			return errs.HTTPError{Code: 404, Message: "User not found"}
+		}
+		return err
+	}
 	return c.Status(200).JSON(userTodos)
 }
 

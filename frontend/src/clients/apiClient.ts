@@ -58,7 +58,7 @@ export const apiClient = {
 async function fetchWithConfig(endpoint: string, config: RequestInit = {}) {
   const response = await fetch(BASE_URL + endpoint, config);
   if (!response.ok) {
-    console.log(await response.text());
+    console.error(await response.text());
     throw new HttpError(response.statusText, response.status);
   }
   return response.json();

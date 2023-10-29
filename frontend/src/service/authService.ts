@@ -1,6 +1,11 @@
 import { apiClient } from '../clients/apiClient';
 import { ValidationError } from '../errors/ValidationError';
-import { AuthData, LoginProps, SignupProps } from '../types/auth';
+import {
+  AuthData,
+  LoginProps,
+  SignupProps,
+  StoreAuthDataProps,
+} from '../types/auth';
 
 export const authService = {
   login: async (credentials: LoginProps): Promise<AuthData> => {
@@ -50,13 +55,4 @@ function storeAuthData({
   }
   localStorage.setItem('accessToken', access_token);
   localStorage.setItem('refreshToken', refresh_token);
-}
-
-interface StoreAuthDataProps {
-  user: {
-    id: string;
-    email: string;
-  };
-  access_token: string;
-  refresh_token: string;
 }

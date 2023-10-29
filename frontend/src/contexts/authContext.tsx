@@ -1,16 +1,5 @@
-import {
-  createContext,
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useState,
-} from 'react';
-import { AuthData } from '../types/auth';
-
-interface AuthContextProps {
-  authData: AuthData;
-  setAuthData: Dispatch<SetStateAction<AuthData>>;
-}
+import { createContext, useEffect, useState } from 'react';
+import { AuthContextProps, AuthData } from '../types/auth';
 
 export const AuthContext = createContext<AuthContextProps>({
   authData: { isLoggedIn: false },

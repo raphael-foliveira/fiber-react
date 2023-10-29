@@ -27,8 +27,12 @@ func (u *Users) FindOneByEmail(email string) (*models.User, error) {
 	return u.repository.FindOneByEmail(email)
 }
 
-func (u *Users) FindOne(id int) (*models.User, error) {
-	return u.repository.FindOne(id)
+func (u *Users) FindOne(id int) (*dto.User, error) {
+	userModel, err := u.repository.FindOne(id)
+	if err != nil {
+		return nil, err
+	}
+	return dto.UserFromModel(userModel), nil
 }
 
 func (u *Users) FindOneWithTodos(id int) (*dto.UserWithTodos, error) {
@@ -49,11 +53,11 @@ func (u *Users) FindOneWithTodos(id int) (*dto.UserWithTodos, error) {
 }
 
 func (u *Users) FindUserTodos(id int) ([]*dto.Todo, error) {
-	todos, err := u.todosService.FindByUserId(id)
+	_, err := u.FindOne(id)
 	if err != nil {
 		return nil, err
 	}
-	return dto.TodosFromModels(todos), nil
+	return u.todosService.FindByUserId(id)
 }
 
 func (u *Users) Create(user *dto.CreateUser) (*models.User, error) {

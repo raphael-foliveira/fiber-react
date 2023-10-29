@@ -14,16 +14,24 @@ func NewTodos(repository repositories.TodosRepository) *Todos {
 	return &Todos{repository}
 }
 
-func (t *Todos) Find() ([]*models.Todo, error) {
-	return t.repository.Find()
+func (t *Todos) Find() ([]*dto.Todo, error) {
+	todos, err := t.repository.Find()
+	if err != nil {
+		return nil, err
+	}
+	return dto.TodosFromModels(todos), nil
 }
 
 func (t *Todos) FindOneById(id int) (*dto.TodoWithUser, error) {
 	return t.repository.FindOneById(id)
 }
 
-func (t *Todos) FindByUserId(userId int) ([]*models.Todo, error) {
-	return t.repository.FindByUserId(userId)
+func (t *Todos) FindByUserId(userId int) ([]*dto.Todo, error) {
+	todos, err := t.repository.FindByUserId(userId)
+	if err != nil {
+		return nil, err
+	}
+	return dto.TodosFromModels(todos), nil
 }
 
 func (t *Todos) Create(todo *dto.CreateTodo) (*models.Todo, error) {

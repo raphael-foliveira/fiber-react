@@ -37,9 +37,11 @@ func (t *Todos) FindOneById(c *fiber.Ctx) error {
 
 func (t *Todos) Create(c *fiber.Ctx) error {
 	createTodo := dto.CreateTodo{}
-	if err := c.BodyParser(createTodo); err != nil {
+	if err := c.BodyParser(&createTodo); err != nil {
 		return err
 	}
+	user := c.Locals("user").(*dto.User)
+	createTodo.UserID = user.ID
 	todo, err := t.service.Create(&createTodo)
 	if err != nil {
 		return err

@@ -29,11 +29,11 @@ export default function SignupForm() {
       });
       setAuthData(authResponse);
       navigate('/todos');
-    } catch (e) {
-      console.log({ e });
+    } catch (err) {
+      console.log({ err });
       setFormError(true);
-      if (e instanceof ValidationError) {
-        setFormErrorMessage(e.message);
+      if (err instanceof ValidationError) {
+        setFormErrorMessage(err.message);
         return;
       }
       setFormErrorMessage('Erro ao cadastrar. Tente novamente.');
