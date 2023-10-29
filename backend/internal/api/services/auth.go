@@ -60,23 +60,33 @@ func (a *Auth) Signup(user *dto.CreateUser) (*dto.LoginResponse, error) {
 	})
 }
 
-func (a *Auth) RefreshToken(refreshToken *dto.RefreshToken) (string, error) {
+func (a *Auth) RefreshToken(refreshToken *dto.RefreshToken) (*dto.RefreshTokenResponse, error) {
 	token, err := a.tokensRepository.FindOne(refreshToken.Token)
 	if err != nil {
-		return "", errs.HTTPError{Code: 401, Message: "invalid refresh token"}
+		return nil, errs.HTTPError{Code: 401, Message: "invalid refresh token"}
 	}
 	user, err := a.usersService.FindOne(token.UserID)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return a.jwtService.GenerateAccessToken(&dto.User{
-		ID:    user.ID,
-		Email: user.Email,
+	if user.ID != token.UserID {
+		return nil, errs.HTTPError{Code: 401, Message: "invalid refresh token"}
+	}
+	accessToken, err := a.jwtService.GenerateAccessToken(&dto.User{
+		ID:       user.ID,
+		Email:    user.Email,
+		Username: user.Username,
 	})
+	if err != nil {
+		return nil, err
+	}
+	return &dto.RefreshTokenResponse{
+		AccessToken: accessToken,
+	}, nil
 }
 
-func (a *Auth) Authenticate(authorization string) (*dto.User, error) {
-	user, err := a.jwtService.ValidateToken(authorization, false)
+func (a *Auth) Authenticate(token string) (*dto.User, error) {
+	user, err := a.jwtService.ValidateToken(token, false)
 	if err != nil {
 		return nil, err
 	}

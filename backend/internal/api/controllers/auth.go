@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"fmt"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/api/services"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/dto"
@@ -65,7 +63,6 @@ func (a *Auth) Authenticate(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	c.Context().SetUserValue("user", user)
-	fmt.Println("user", user.Username)
+	c.Locals("user", user)
 	return c.Next()
 }

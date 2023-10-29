@@ -1,12 +1,29 @@
 import { apiClient } from '../clients/apiClient';
 import { ValidationError } from '../errors/ValidationError';
-import { AuthData, LoginProps, SignupProps } from '../types/auth';
+import {
+  AuthData,
+  LoginProps,
+  SignupProps,
+  StoreAuthDataProps,
+} from '../types/auth';
 
 export const authService = {
   login: async (credentials: LoginProps): Promise<AuthData> => {
-    const loginResponse = await apiClient.post('/auth/login', credentials);
-    storeAuthData(loginResponse);
-    return loginResponse;
+    const { access_token, refresh_token, user } = await apiClient.post(
+      '/auth/login',
+      credentials
+    );
+    storeAuthData({ access_token, refresh_token, user });
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+      },
+      accessToken: access_token,
+      refreshToken: refresh_token,
+      isLoggedIn: true,
+    };
   },
 
   signup: async (credentials: SignupProps): Promise<AuthData> => {
@@ -14,6 +31,27 @@ export const authService = {
     const signupResponse = await apiClient.post('/auth/signup', credentials);
     storeAuthData(signupResponse);
     return signupResponse;
+  },
+
+  refreshToken: async ({
+    refreshToken,
+    userId,
+  }: {
+    refreshToken: string;
+    userId: number;
+  }) => {
+    const { access_token } = await apiClient.post('/auth/refresh-token', {
+      user_id: userId,
+      refresh_token: refreshToken,
+    });
+    localStorage.setItem('accessToken', access_token);
+    return { accessToken: access_token };
+  },
+
+  logout: () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
   },
 };
 
@@ -50,13 +88,4 @@ function storeAuthData({
   }
   localStorage.setItem('accessToken', access_token);
   localStorage.setItem('refreshToken', refresh_token);
-}
-
-interface StoreAuthDataProps {
-  user: {
-    id: string;
-    email: string;
-  };
-  access_token: string;
-  refresh_token: string;
 }

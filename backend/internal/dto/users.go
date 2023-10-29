@@ -19,6 +19,14 @@ type User struct {
 	Username string `json:"username"`
 }
 
+func UserFromModel(userModel *models.User) *User {
+	return &User{
+		ID:       userModel.ID,
+		Email:    userModel.Email,
+		Username: userModel.Username,
+	}
+}
+
 func UsersFromModels(userModels []*models.User) []*User {
 	users := []*User{}
 	for _, userModel := range userModels {

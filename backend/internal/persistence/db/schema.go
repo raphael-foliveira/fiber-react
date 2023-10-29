@@ -19,6 +19,8 @@ var schema string = `
 		title VARCHAR(255) NOT NULL,
 		description VARCHAR(255) NOT NULL,
 		completed BOOLEAN NOT NULL DEFAULT FALSE,
-		user_id INTEGER REFERENCES users(id) ON DELETE CASCADE
+		user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+		created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+		completed_at TIMESTAMP
 	);
 `

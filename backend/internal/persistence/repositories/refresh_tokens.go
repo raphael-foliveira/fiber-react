@@ -26,7 +26,7 @@ func NewRefreshTokens(db *sql.DB) RefreshTokensRepository {
 
 func (r *refreshTokens) FindOne(refreshToken string) (*models.RefreshToken, error) {
 	row := r.db.QueryRow(`
-		SELECT user_id
+		SELECT id, token, user_id
 		FROM 
 			refreshtokens
 		WHERE token = $1`,
