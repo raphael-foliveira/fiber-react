@@ -1,6 +1,9 @@
 package controllers
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/api/services"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/dto"
@@ -8,11 +11,12 @@ import (
 )
 
 type Users struct {
-	service *services.Users
+	service     *services.Users
+	authService *services.Auth
 }
 
-func NewUsers(service *services.Users) *Users {
-	return &Users{service}
+func NewUsers(service *services.Users, authService *services.Auth) *Users {
+	return &Users{service, authService}
 }
 
 func (u *Users) Find(c *fiber.Ctx) error {
@@ -28,11 +32,25 @@ func (u *Users) FindOneById(c *fiber.Ctx) error {
 	if err != nil {
 		return errs.HTTPError{Code: 400, Message: "Invalid id"}
 	}
-	user, err := u.service.FindOneWithTodos(id)
+	user, err := u.service.FindOne(id)
 	if err != nil {
+		var notFoundErr errs.NotFoundError
+		if errors.As(err, &notFoundErr) {
+			return errs.HTTPError{Code: 404, Message: "User not found"}
+		}
 		return err
 	}
 	return c.Status(200).JSON(user)
+}
+
+func (u *Users) FindUserTodos(c *fiber.Ctx) error {
+	id, err := c.ParamsInt("id")
+	if err != nil {
+		return errs.HTTPError{Code: 400, Message: "Invalid id"}
+	}
+	fmt.Println(c.Context().Value("user"))
+	userTodos, err := u.service.FindUserTodos(id)
+	return c.Status(200).JSON(userTodos)
 }
 
 func (u *Users) Create(c *fiber.Ctx) error {

@@ -7,15 +7,20 @@ import (
 )
 
 type Users struct {
-	repository repositories.UsersRepository
+	repository   repositories.UsersRepository
+	todosService *Todos
 }
 
-func NewUsers(repository repositories.UsersRepository) *Users {
-	return &Users{repository}
+func NewUsers(repository repositories.UsersRepository, todosService *Todos) *Users {
+	return &Users{repository, todosService}
 }
 
-func (u *Users) Find() ([]*models.User, error) {
-	return u.repository.Find()
+func (u *Users) Find() ([]*dto.User, error) {
+	users, err := u.repository.Find()
+	if err != nil {
+		return nil, err
+	}
+	return dto.UsersFromModels(users), nil
 }
 
 func (u *Users) FindOneByEmail(email string) (*models.User, error) {
@@ -27,7 +32,28 @@ func (u *Users) FindOne(id int) (*models.User, error) {
 }
 
 func (u *Users) FindOneWithTodos(id int) (*dto.UserWithTodos, error) {
-	return u.repository.FindOneWithTodos(id)
+	user, err := u.FindOne(id)
+	if err != nil {
+		return nil, err
+	}
+	todos, err := u.FindUserTodos(id)
+	if err != nil {
+		return nil, err
+	}
+	return &dto.UserWithTodos{
+		ID:       user.ID,
+		Email:    user.Email,
+		Username: user.Username,
+		Todos:    todos,
+	}, err
+}
+
+func (u *Users) FindUserTodos(id int) ([]*dto.Todo, error) {
+	todos, err := u.todosService.FindByUserId(id)
+	if err != nil {
+		return nil, err
+	}
+	return dto.TodosFromModels(todos), nil
 }
 
 func (u *Users) Create(user *dto.CreateUser) (*models.User, error) {

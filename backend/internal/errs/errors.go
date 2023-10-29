@@ -5,6 +5,10 @@ type HTTPError struct {
 	Message string
 }
 
-func (httpErr HTTPError) Error() string {
-	return httpErr.Message
+func (httpErr HTTPError) Error() string { return httpErr.Message }
+
+type NotFoundError struct {
+	Message string
 }
+
+func (notFoundErr NotFoundError) Error() string { return notFoundErr.Message }
