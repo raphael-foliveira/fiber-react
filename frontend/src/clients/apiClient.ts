@@ -61,6 +61,9 @@ async function fetchWithConfig(endpoint: string, config: RequestInit = {}) {
     console.error(await response.json());
     throw new HttpError(response.statusText, response.status);
   }
+  if (response.status === 204) {
+    return;
+  }
   return response.json();
 }
 
