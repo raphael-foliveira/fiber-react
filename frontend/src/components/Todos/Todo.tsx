@@ -44,7 +44,7 @@ export function SingleTodo({
     >
       {isEditing ? (
         <UpdateTodo
-          todo={todo}
+          todo={todoState}
           setTodoState={setTodoState}
           setIsEditing={setIsEditing}
         />
