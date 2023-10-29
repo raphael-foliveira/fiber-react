@@ -13,8 +13,9 @@ var accessJwtSecret = []byte(os.Getenv("ACCESS_JWT_SECRET"))
 var refreshJwtSecret = []byte(os.Getenv("REFRESH_JWT_SECRET"))
 
 type JwtClaims struct {
-	Sub   int    `json:"sub"`
-	Email string `json:"email"`
+	Sub      int    `json:"sub"`
+	Email    string `json:"email"`
+	Username string `json:"username"`
 	jwt.RegisteredClaims
 }
 
@@ -43,6 +44,7 @@ func (j *Jwt) GenerateAccessToken(user *dto.User) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, JwtClaims{
 		user.ID,
 		user.Email,
+		user.Username,
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -56,6 +58,7 @@ func (j *Jwt) GenerateRefreshToken(user *dto.User) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, JwtClaims{
 		user.ID,
 		user.Email,
+		user.Username,
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(720 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -83,7 +86,8 @@ func (j *Jwt) ValidateToken(token string, isRefreshToken bool) (*dto.User, error
 		return nil, errs.HTTPError{Code: 401, Message: "invalid token"}
 	}
 	return &dto.User{
-		ID:    claims.Sub,
-		Email: claims.Email,
+		ID:       claims.Sub,
+		Email:    claims.Email,
+		Username: claims.Username,
 	}, nil
 }

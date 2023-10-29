@@ -1,10 +1,11 @@
 export interface AuthData {
-  user: {
+  user?: {
     id: string;
     email: string;
   };
-  accessToken: string;
-  refreshToken: string;
+  accessToken?: string;
+  refreshToken?: string;
+  isLoggedIn: boolean;
 }
 
 export interface LoginProps {

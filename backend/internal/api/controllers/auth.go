@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/api/services"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/dto"
@@ -38,6 +40,10 @@ func (a *Auth) Signup(c *fiber.Ctx) error {
 	return c.Status(201).JSON(loginResponse)
 }
 
+func (a *Auth) Logout(c *fiber.Ctx) error {
+	return nil
+}
+
 func (a *Auth) RefreshToken(c *fiber.Ctx) error {
 	refreshToken := dto.RefreshToken{}
 	if err := c.BodyParser(&refreshToken); err != nil {
@@ -48,4 +54,18 @@ func (a *Auth) RefreshToken(c *fiber.Ctx) error {
 		return err
 	}
 	return c.Status(200).JSON(token)
+}
+
+func (a *Auth) Authenticate(c *fiber.Ctx) error {
+	token, err := parseAuthHeader(c)
+	if err != nil {
+		return err
+	}
+	user, err := a.service.Authenticate(token)
+	if err != nil {
+		return err
+	}
+	c.Context().SetUserValue("user", user)
+	fmt.Println("user", user.Username)
+	return c.Next()
 }

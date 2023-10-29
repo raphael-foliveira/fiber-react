@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/log"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/api/services"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/dto"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/errs"
@@ -43,18 +43,13 @@ func (u *Users) FindOneById(c *fiber.Ctx) error {
 	return c.Status(200).JSON(user)
 }
 
-func (u *Users) Me(c *fiber.Ctx) error {
-	headers := c.GetReqHeaders()
-	authorization, ok := headers["Authorization"]
-	if !ok {
-		return errs.HTTPError{Code: 401, Message: "Unauthorized"}
-	}
-	user, err := u.authService.Authenticate(authorization[0])
+func (u *Users) FindUserTodos(c *fiber.Ctx) error {
+	id, err := c.ParamsInt("id")
 	if err != nil {
-		log.Error(err)
-		return errs.HTTPError{Code: 401, Message: "Unauthorized"}
+		return errs.HTTPError{Code: 400, Message: "Invalid id"}
 	}
-	userTodos, err := u.service.FindUserTodos(user.ID)
+	fmt.Println(c.Context().Value("user"))
+	userTodos, err := u.service.FindUserTodos(id)
 	return c.Status(200).JSON(userTodos)
 }
 

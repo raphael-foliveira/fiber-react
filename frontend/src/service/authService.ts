@@ -39,8 +39,24 @@ function validateSignupCredentials({
   }
 }
 
-function storeAuthData(authData: AuthData) {
-  localStorage.setItem('user', JSON.stringify(authData.user));
-  localStorage.setItem('accessToken', authData.accessToken);
-  localStorage.setItem('refreshToken', authData.refreshToken);
+function storeAuthData({
+  user,
+  access_token,
+  refresh_token,
+}: StoreAuthDataProps) {
+  localStorage.setItem('user', JSON.stringify(user));
+  if (!access_token || !refresh_token) {
+    throw new Error('No auth data to store');
+  }
+  localStorage.setItem('accessToken', access_token);
+  localStorage.setItem('refreshToken', refresh_token);
+}
+
+interface StoreAuthDataProps {
+  user: {
+    id: string;
+    email: string;
+  };
+  access_token: string;
+  refresh_token: string;
 }

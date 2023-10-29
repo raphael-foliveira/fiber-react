@@ -36,7 +36,7 @@ func Start(db *sql.DB) error {
 	authController := controllers.NewAuth(authService)
 
 	routes.Todos(todosController, app)
-	routes.Users(usersController, app)
+	routes.Users(usersController, authController, app)
 	routes.Auth(authController, app)
 
 	healthCheckController := controllers.NewHealthCheck()

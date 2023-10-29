@@ -1,19 +1,31 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { Home } from '../pages/home/Home';
 import { Login } from '../pages/login/Login';
+import { Root } from '../pages/root/Root';
 import { Signup } from '../pages/signup/Signup';
 
 export const router = createBrowserRouter([
   {
     path: '',
-    element: <Home />,
-  },
-  {
-    path: 'login',
-    element: <Login />,
-  },
-  {
-    path: 'signup',
-    element: <Signup />,
+    element: <Root />,
+    errorElement: <h1>404</h1>,
+    children: [
+      {
+        path: '',
+        element: <Home />,
+      },
+      {
+        path: 'login',
+        element: <Login />,
+      },
+      {
+        path: 'signup',
+        element: <Signup />,
+      },
+      {
+        path: 'todos',
+        element: <h1>Todos</h1>,
+      },
+    ],
   },
 ]);
