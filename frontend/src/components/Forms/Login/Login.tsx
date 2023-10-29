@@ -63,8 +63,8 @@ export default function LoginForm() {
         {formError && (
           <Typography
             variant='subtitle1'
+            color='error'
             sx={{
-              color: 'red',
               textAlign: 'center',
               width: '100%',
             }}

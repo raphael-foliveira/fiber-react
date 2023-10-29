@@ -7,7 +7,7 @@ export default function Navbar() {
   const { authData, setAuthData } = useContext(AuthContext);
 
   const handleLogout = () => {
-    setAuthData({ isLoggedIn: false });
+    setAuthData({ isLoggedIn: false, accessToken: '', refreshToken: '' });
     localStorage.removeItem('user');
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
@@ -17,17 +17,25 @@ export default function Navbar() {
     <AppBar position='static'>
       <Toolbar>
         <Link to='/'>
-          <Typography variant='h6' sx={{ cursor: 'pointer' }}>
+          <Typography variant='h6' sx={{ cursor: 'pointer', margin: '0 2rem' }}>
             Home
           </Typography>
         </Link>
         {authData.isLoggedIn && (
-          <Button
-            onClick={handleLogout}
-            sx={{ color: 'inherit', marginLeft: 'auto' }}
-          >
-            Logout
-          </Button>
+          <>
+            <Link to='/todos'>
+              <Button sx={{ color: 'inherit', marginRight: 'auto' }}>
+                Tarefas
+              </Button>
+            </Link>
+
+            <Button
+              onClick={handleLogout}
+              sx={{ color: 'inherit', marginLeft: 'auto' }}
+            >
+              Logout
+            </Button>
+          </>
         )}
       </Toolbar>
     </AppBar>

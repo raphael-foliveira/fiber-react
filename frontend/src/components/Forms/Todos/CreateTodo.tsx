@@ -1,20 +1,25 @@
 import { Button, TextField, Typography } from '@mui/material';
 import { FormEventHandler, useState } from 'react';
-import { useSession } from '../../../hooks/useSession';
 import { todosService } from '../../../service/todosService';
 import { ButtonWrapper, FieldWrapper, FormCard } from '../styles';
+import { useNavigate } from 'react-router-dom';
 
-export default function CreateTodoForm() {
-  const { accessToken } = useSession();
+export default function CreateTodoForm({
+  accessToken,
+}: {
+  accessToken: string;
+}) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [formError, setFormError] = useState(false);
   const [formErrorMessage, setFormErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     setFormError(false);
     setFormErrorMessage('');
+    navigate('/todos');
     try {
       await todosService.createTodo({ title, description }, accessToken);
     } catch (err) {

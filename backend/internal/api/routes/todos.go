@@ -10,7 +10,7 @@ func Todos(controller *controllers.Todos, authController *controllers.Auth, app 
 		todos.Get("/", controller.Find)
 		todos.Get("/:id", controller.FindOneById)
 		todos.Post("/", authController.Authenticate, controller.Create)
-		todos.Put("/:id", controller.Update)
-		todos.Delete("/:id", controller.Delete)
+		todos.Put("/:id", authController.Authenticate, controller.Update)
+		todos.Delete("/:id", authController.Authenticate, controller.Delete)
 	})
 }

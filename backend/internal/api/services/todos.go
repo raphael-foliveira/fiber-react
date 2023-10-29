@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/raphael-foliveira/fiber-react/backend/internal/dto"
+	"github.com/raphael-foliveira/fiber-react/backend/internal/errs"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/models"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/persistence/repositories"
 )
@@ -38,10 +39,29 @@ func (t *Todos) Create(todo *dto.CreateTodo) (*models.Todo, error) {
 	return t.repository.Create(todo)
 }
 
-func (t *Todos) Update(id int, todo *dto.UpdateTodo) (*models.Todo, error) {
+func (t *Todos) Update(id int, todo *dto.UpdateTodo, userId int) (*models.Todo, error) {
+	err := t.checkOwner(userId, id)
+	if err != nil {
+		return nil, err
+	}
 	return t.repository.Update(id, todo)
 }
 
-func (t *Todos) Delete(id int) error {
+func (t *Todos) Delete(id, userId int) error {
+	err := t.checkOwner(userId, id)
+	if err != nil {
+		return err
+	}
 	return t.repository.Delete(id)
+}
+
+func (t *Todos) checkOwner(userId, todoId int) error {
+	todo, err := t.FindOneById(todoId)
+	if err != nil {
+		return errs.HTTPError{Code: 404, Message: "Todo not found"}
+	}
+	if todo.User.ID != userId {
+		return errs.HTTPError{Code: 403, Message: "You are not the owner of this todo"}
+	}
+	return nil
 }

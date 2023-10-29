@@ -4,6 +4,7 @@ import { Login } from '../pages/login/Login';
 import { Root } from '../pages/root/Root';
 import { Signup } from '../pages/signup/Signup';
 import { Todos } from '../pages/todos/Todos';
+import { CreateTodo } from '../pages/todos/create/CreateTodo';
 
 export const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ export const router = createBrowserRouter([
       {
         path: 'todos',
         element: <Todos />,
+      },
+      {
+        path: 'todos/create',
+        element: <CreateTodo />,
       },
     ],
   },

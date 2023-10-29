@@ -33,6 +33,21 @@ export const authService = {
     return signupResponse;
   },
 
+  refreshToken: async ({
+    refreshToken,
+    userId,
+  }: {
+    refreshToken: string;
+    userId: number;
+  }) => {
+    const { access_token } = await apiClient.post('/auth/refresh-token', {
+      user_id: userId,
+      refresh_token: refreshToken,
+    });
+    localStorage.setItem('accessToken', access_token);
+    return { accessToken: access_token };
+  },
+
   logout: () => {
     localStorage.removeItem('user');
     localStorage.removeItem('accessToken');

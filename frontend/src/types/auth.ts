@@ -2,12 +2,12 @@ import { Dispatch, SetStateAction } from 'react';
 
 export interface AuthData {
   user?: {
-    id: string;
+    id: number;
     email: string;
     username: string;
   };
-  accessToken?: string;
-  refreshToken?: string;
+  accessToken: string;
+  refreshToken: string;
   isLoggedIn: boolean;
 }
 
