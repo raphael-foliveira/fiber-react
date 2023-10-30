@@ -34,14 +34,20 @@ func Start(db *sql.DB) error {
 	todosController := controllers.NewTodos(todosService)
 	usersController := controllers.NewUsers(usersService, authService)
 	authController := controllers.NewAuth(authService)
-
-	routes.Todos(todosController, authController, app)
-	routes.Users(usersController, authController, app)
-	routes.Auth(authController, app)
-
 	healthCheckController := controllers.NewHealthCheck()
 
+	app.Route("/api", func(router fiber.Router) {
+		routes.Todos(todosController, authController, router)
+		routes.Users(usersController, authController, router)
+		routes.Auth(authController, router)
+	})
 	app.Get("/health-check", healthCheckController.HealthCheck)
+
+	app.Static("/", "web")
+	app.Get("/*", func(c *fiber.Ctx) error {
+		fmt.Println("running")
+		return c.SendFile("./web/index.html")
+	})
 
 	log.Info("Starting server on port: ", port)
 	return app.Listen(fmt.Sprintf(":%v", port))

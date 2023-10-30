@@ -6,7 +6,6 @@ export function Root() {
   return (
     <Box sx={{ backgroundColor: 'background.paper', height: '100vh' }}>
       <Navbar />
-
       <Outlet />
     </Box>
   );
