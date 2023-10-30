@@ -62,17 +62,21 @@ func (u *Users) FindUserTodos(id int) ([]*dto.Todo, error) {
 }
 
 func (u *Users) Create(user *dto.CreateUser) (*models.User, error) {
+	err := u.checkConflicts(user)
+	if err != nil {
+		return nil, err
+	}
 	return u.repository.Create(user)
 }
 
 func (u *Users) checkConflicts(user *dto.CreateUser) error {
 	_, err := u.repository.FindOneByEmail(user.Email)
 	if err == nil {
-		return errs.HTTPError{Code: 409, Message: "Email already in use"}
+		return errs.ConflictError{Message: "Email already in use", Field: "email"}
 	}
 	_, err = u.repository.FindOneByUsername(user.Username)
 	if err == nil {
-		return errs.HTTPError{Code: 409, Message: "Username already in use"}
+		return errs.ConflictError{Message: "Username already in use", Field: "username"}
 	}
 	return nil
 }
