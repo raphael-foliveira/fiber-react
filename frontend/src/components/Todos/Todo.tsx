@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { todosService } from '../../service/todosService';
 import { Todo } from '../../types/todos';
 import UpdateTodo from '../Forms/Todos/UpdateTodo';
+import { green, lightGreen, red } from '@mui/material/colors';
 
 interface SingleTodoProps {
   todo: Todo;
@@ -40,6 +41,7 @@ export function SingleTodo({
         height: '400px',
         display: 'flex',
         flexDirection: 'column',
+        backgroundColor: todoState.completed ? green[100] : red[100],
       }}
     >
       {isEditing ? (
