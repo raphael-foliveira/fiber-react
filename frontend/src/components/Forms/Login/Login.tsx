@@ -2,7 +2,8 @@ import { Button, TextField, Typography } from '@mui/material';
 import { FormEventHandler, useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../../../service/authService';
-import { ButtonWrapper, FieldWrapper, FormCard } from '../styles';
+import { ButtonWrapper, FieldWrapper } from '../styles';
+import { FormCard } from '../FormCard';
 import { AuthContext } from '../../../contexts/authContext';
 
 export default function LoginForm() {
@@ -27,7 +28,9 @@ export default function LoginForm() {
   return (
     <form action='' onSubmit={handleSubmit}>
       <FormCard>
-        <Typography variant='h4'>Login</Typography>
+        <Typography variant='h4' sx={{ textAlign: 'center', marginBottom: 4 }}>
+          Login
+        </Typography>
         <FieldWrapper>
           <TextField
             label='Email'

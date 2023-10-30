@@ -78,6 +78,7 @@ export const todosService = {
         headers: { Authorization: 'Bearer ' + accessToken },
       });
     } catch (err) {
+      console.log(err);
       if (err instanceof HttpError) {
         if (err.status === 401 || err.status === 403) {
           authService.logout();

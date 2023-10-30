@@ -21,7 +21,7 @@ export default function TodosList() {
 
   useEffect(() => {
     fetchTodos(accessToken!);
-  }, [accessToken, todos]);
+  }, []);
 
   return (
     <>

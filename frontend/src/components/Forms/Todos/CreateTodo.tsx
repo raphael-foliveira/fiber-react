@@ -1,8 +1,9 @@
 import { Button, TextField, Typography } from '@mui/material';
 import { FormEventHandler, useState } from 'react';
-import { todosService } from '../../../service/todosService';
-import { ButtonWrapper, FieldWrapper, FormCard } from '../styles';
 import { useNavigate } from 'react-router-dom';
+import { todosService } from '../../../service/todosService';
+import { FormCard } from '../FormCard';
+import { ButtonWrapper, FieldWrapper } from '../styles';
 
 export default function CreateTodoForm({
   accessToken,
@@ -35,7 +36,9 @@ export default function CreateTodoForm({
   return (
     <form action='' onSubmit={handleSubmit}>
       <FormCard>
-        <Typography variant='h4'>Cadastro</Typography>
+        <Typography variant='h4' sx={{ textAlign: 'center', marginBottom: 4 }}>
+          Nova tarefa
+        </Typography>
         <FieldWrapper>
           <TextField
             label='Título'
@@ -73,7 +76,7 @@ export default function CreateTodoForm({
         )}
         <ButtonWrapper>
           <Button variant='contained' type='submit'>
-            Cadastrar
+            Criar
           </Button>
         </ButtonWrapper>
       </FormCard>
