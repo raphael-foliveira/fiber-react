@@ -82,7 +82,7 @@ func errorHandler(c *fiber.Ctx, err error) error {
 	}
 	if errors.As(err, &conflictErr) {
 		c.Set(fiber.HeaderContentType, fiber.MIMETextPlainCharsetUTF8)
-		return c.Status(code).JSON(fiber.Map{
+		return c.Status(409).JSON(fiber.Map{
 			"error":  err.Error(),
 			"status": 409,
 			"field":  conflictErr.Field,

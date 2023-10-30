@@ -40,14 +40,13 @@ export default function SignupForm() {
       }
       if (err instanceof HttpError && err.status === 409) {
         const errJson = err.json as { field?: string };
-        if (errJson.field === 'email') {
-          setFormErrorMessage('Esse email já está cadastrado');
-          return;
-        }
-        if (errJson.field === 'username') {
-          setFormErrorMessage('Esse nome de usuário já está cadastrado');
-          return;
-        }
+        const errMessages: Record<string, string> = {
+          email: 'Esse email já está cadastrado',
+          username: 'Esse nome de usuário já está cadastrado',
+        };
+        console.log({ errJson });
+        setFormErrorMessage(errMessages[errJson.field || '']);
+        return;
       }
       setFormErrorMessage('Erro ao cadastrar. Tente novamente.');
     }
