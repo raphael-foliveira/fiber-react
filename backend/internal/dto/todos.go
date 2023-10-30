@@ -1,7 +1,6 @@
 package dto
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/raphael-foliveira/fiber-react/backend/internal/models"
@@ -56,11 +55,11 @@ func TodosFromModels(todoModels []*models.Todo) []*Todo {
 }
 
 type TodoWithUser struct {
-	ID          int          `json:"id"`
-	Title       string       `json:"title"`
-	Description string       `json:"description"`
-	Completed   bool         `json:"completed"`
-	User        User         `json:"user"`
-	CreatedAt   sql.NullTime `json:"created_at"`
-	CompletedAt sql.NullTime `json:"completed_at"`
+	ID          int       `json:"id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	Completed   bool      `json:"completed"`
+	User        User      `json:"user"`
+	CreatedAt   time.Time `json:"created_at"`
+	CompletedAt time.Time `json:"completed_at"`
 }
