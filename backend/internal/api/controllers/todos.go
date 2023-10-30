@@ -94,7 +94,7 @@ func (t *Todos) Create(c *fiber.Ctx) error {
 // @Failure 400 {object} errs.HTTPError
 // @Failure 403 {object} errs.HTTPError
 // @Failure 404 {object} errs.HTTPError
-// @Secutiry BearerAuth
+// @Security BearerAuth
 // @Router /todos/{id} [put]
 func (t *Todos) Update(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
@@ -123,7 +123,7 @@ func (t *Todos) Update(c *fiber.Ctx) error {
 // @Param id path int true "Todo ID"
 // @Success 204
 // @Failure 400 {object} errs.HTTPError
-// @Secutiry BearerAuth
+// @Security BearerAuth
 // @Router /todos/{id} [delete]
 func (t *Todos) Delete(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
