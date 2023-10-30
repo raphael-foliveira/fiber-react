@@ -2,11 +2,8 @@ package controllers
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/log"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/api/services"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/dto"
-	"github.com/raphael-foliveira/fiber-react/backend/internal/errs"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type Auth struct {
@@ -54,7 +51,6 @@ func (a *Auth) Signup(c *fiber.Ctx) error {
 	if err := c.BodyParser(&user); err != nil {
 		return err
 	}
-
 
 	loginResponse, err := a.service.Signup(&user)
 	if err != nil {

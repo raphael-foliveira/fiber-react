@@ -284,6 +284,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Update todo",
                 "consumes": [
                     "application/json"
@@ -348,6 +353,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Delete todo",
                 "consumes": [
                     "application/json"
@@ -390,6 +400,11 @@ const docTemplate = `{
         },
         "/users/{id}": {
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Update user",
                 "consumes": [
                     "application/json"
@@ -402,6 +417,13 @@ const docTemplate = `{
                 ],
                 "summary": "Update user",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "integer",
                         "description": "User ID",
@@ -435,6 +457,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Delete user",
                 "consumes": [
                     "application/json"
@@ -447,6 +474,13 @@ const docTemplate = `{
                 ],
                 "summary": "Delete user",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "integer",
                         "description": "User ID",
@@ -470,6 +504,11 @@ const docTemplate = `{
         },
         "/users/{id}/todos": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Find user todos",
                 "consumes": [
                     "application/json"
@@ -482,6 +521,13 @@ const docTemplate = `{
                 ],
                 "summary": "Find user todos",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "integer",
                         "description": "User ID",
