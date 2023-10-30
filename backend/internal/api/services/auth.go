@@ -46,6 +46,17 @@ func (a *Auth) Login(credentials *dto.Login) (*dto.LoginResponse, error) {
 	}, nil
 }
 
+func (a *Auth) Logout(token string, userId int) error {
+	authToken, err := a.tokensRepository.FindOne(token)
+	if err != nil {
+		return err
+	}
+	if authToken.UserID != userId {
+		return errs.HTTPError{Code: 401, Message: "invalid refresh token"}
+	}
+	return a.tokensRepository.Delete(token)
+}
+
 func (a *Auth) Signup(user *dto.CreateUser) (*dto.LoginResponse, error) {
 	if user.Password != user.ConfirmPassword {
 		return nil, errs.HTTPError{Code: 400, Message: "passwords do not match"}

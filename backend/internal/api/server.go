@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/gofiber/contrib/swagger"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -54,6 +55,12 @@ func Start(db *sql.DB) error {
 }
 
 func attachMiddleware(app *fiber.App) {
+	app.Use(swagger.New(swagger.Config{
+		BasePath: "/",
+		FilePath: "./docs/swagger.yaml",
+		Path:     "/api",
+		Title:    "Todo API",
+	}))
 	app.Use(cors.New())
 	app.Use(logger.New())
 }

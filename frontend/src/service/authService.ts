@@ -48,7 +48,8 @@ export const authService = {
     return { accessToken: access_token };
   },
 
-  logout: () => {
+  logout: async () => {
+    await apiClient.post('/auth/logout', {});
     localStorage.removeItem('user');
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
