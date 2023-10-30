@@ -25,15 +25,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const userString = localStorage.getItem('user');
     const accessToken = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');
-    try {
-      if (userString && accessToken && refreshToken) {
+    if (userString && accessToken && refreshToken) {
+      try {
         const user = JSON.parse(userString);
         setAuthData({ user, accessToken, refreshToken, isLoggedIn: true });
         return;
+      } finally {
+        setAuthData({ isLoggedIn: false, accessToken: '', refreshToken: '' });
       }
-      setAuthData({ isLoggedIn: false, accessToken: '', refreshToken: '' });
-    } catch {
-      setAuthData({ isLoggedIn: false, accessToken: '', refreshToken: '' });
     }
   }, []);
 
