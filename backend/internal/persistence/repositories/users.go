@@ -13,6 +13,7 @@ type UsersRepository interface {
 	Find() ([]*models.User, error)
 	FindOne(id int) (*models.User, error)
 	FindOneByEmail(email string) (*models.User, error)
+	FindOneByUsername(username string) (*models.User, error)
 	Create(todo *dto.CreateUser) (*models.User, error)
 	Update(id int, todo *dto.UpdateUser) (*models.User, error)
 	Delete(id int) error
@@ -54,6 +55,17 @@ func (u *users) FindOneByEmail(email string) (*models.User, error) {
 			users
 		WHERE email = $1`,
 		email,
+	)
+	return scanUser(row)
+}
+
+func (u *users) FindOneByUsername(username string) (*models.User, error) {
+	row := u.db.QueryRow(`
+		SELECT id, email, username, password
+		FROM
+			users
+		WHERE username = $1`,
+		username,
 	)
 	return scanUser(row)
 }

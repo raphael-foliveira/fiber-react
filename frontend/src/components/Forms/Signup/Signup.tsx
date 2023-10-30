@@ -2,10 +2,11 @@ import { Button, TextField, Typography } from '@mui/material';
 import { FormEventHandler, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../contexts/authContext';
+import { HttpError } from '../../../errors/HttpError';
 import { ValidationError } from '../../../errors/ValidationError';
 import { authService } from '../../../service/authService';
-import { ButtonWrapper, FieldWrapper } from '../styles';
 import { FormCard } from '../FormCard';
+import { ButtonWrapper, FieldWrapper } from '../styles';
 
 export default function SignupForm() {
   const [email, setEmail] = useState('');
@@ -31,10 +32,19 @@ export default function SignupForm() {
       setAuthData(authResponse);
       navigate('/todos');
     } catch (err) {
-      console.log({ err });
+      console.error({ err });
       setFormError(true);
       if (err instanceof ValidationError) {
         setFormErrorMessage(err.message);
+        return;
+      }
+      if (err instanceof HttpError && err.status === 409) {
+        const errJson = err.json as { field?: string };
+        const errMessages: Record<string, string> = {
+          email: 'Esse email já está cadastrado',
+          username: 'Esse nome de usuário já está cadastrado',
+        };
+        setFormErrorMessage(errMessages[errJson.field || '']);
         return;
       }
       setFormErrorMessage('Erro ao cadastrar. Tente novamente.');

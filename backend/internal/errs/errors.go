@@ -12,3 +12,10 @@ type NotFoundError struct {
 }
 
 func (notFoundErr NotFoundError) Error() string { return notFoundErr.Message }
+
+type ConflictError struct {
+	Message string
+	Field   string
+}
+
+func (conflictErr ConflictError) Error() string { return conflictErr.Message }
