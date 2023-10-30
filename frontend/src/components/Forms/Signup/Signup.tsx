@@ -35,7 +35,7 @@ export default function SignupForm() {
         confirm_password: confirmPassword,
       });
       setAuthData(authResponse);
-      navigate('/todos');
+      navigate('/login');
     } catch (err) {
       console.error({ err });
       setFormError(true);
