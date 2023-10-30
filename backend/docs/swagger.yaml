@@ -126,6 +126,37 @@ paths:
       summary: Login
       tags:
       - auth
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Logout
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Refresh Token
+        in: body
+        name: refreshToken
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RefreshToken'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errs.HTTPError'
+      security:
+      - BearerAuth: []
+      summary: Logout
+      tags:
+      - auth
   /auth/refresh-token:
     post:
       consumes:

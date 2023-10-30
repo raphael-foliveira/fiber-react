@@ -64,9 +64,12 @@ func (a *Auth) Signup(c *fiber.Ctx) error {
 // @Tags auth
 // @Accept json
 // @Produce json
+// @Param Authorization header string true "Bearer token"
 // @Param refreshToken body dto.RefreshToken true "Refresh Token"
 // @Success 204
+// @Security BearerAuth
 // @Failure 401 {object} errs.HTTPError
+// @Router /auth/logout [post]
 func (a *Auth) Logout(c *fiber.Ctx) error {
 	refreshToken := dto.RefreshToken{}
 	if err := c.BodyParser(&refreshToken); err != nil {
