@@ -26,9 +26,12 @@ export const todosService = {
     }
   },
 
-  getTodos: async (accessToken: string = ''): Promise<Todo[]> => {
+  getUserTodos: async (
+    accessToken: string = '',
+    userId: number = 0
+  ): Promise<Todo[]> => {
     try {
-      const response = await apiClient.get('/todos', {
+      const response = await apiClient.get(`/users/${userId}/todos`, {
         headers: { Authorization: 'Bearer ' + accessToken },
       });
       return response;

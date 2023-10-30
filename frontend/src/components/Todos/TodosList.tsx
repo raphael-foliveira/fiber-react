@@ -7,10 +7,10 @@ import { Box, Button, Container, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 export default function TodosList() {
-  const { accessToken } = useSession();
+  const { accessToken, user } = useSession();
   const [todos, setTodos] = useState<Todo[]>([]);
   const fetchTodos = async (accessToken: string) => {
-    const todos = await todosService.getTodos(accessToken);
+    const todos = await todosService.getUserTodos(accessToken, user?.id);
     setTodos(
       todos.sort(
         (a, b) =>

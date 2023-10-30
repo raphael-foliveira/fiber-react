@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/raphael-foliveira/fiber-react/backend/internal/dto"
+	"github.com/raphael-foliveira/fiber-react/backend/internal/errs"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/models"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/persistence/repositories"
 )
@@ -62,6 +63,18 @@ func (u *Users) FindUserTodos(id int) ([]*dto.Todo, error) {
 
 func (u *Users) Create(user *dto.CreateUser) (*models.User, error) {
 	return u.repository.Create(user)
+}
+
+func (u *Users) checkConflicts(user *dto.CreateUser) error {
+	_, err := u.repository.FindOneByEmail(user.Email)
+	if err == nil {
+		return errs.HTTPError{Code: 409, Message: "Email already in use"}
+	}
+	_, err = u.repository.FindOneByUsername(user.Username)
+	if err == nil {
+		return errs.HTTPError{Code: 409, Message: "Username already in use"}
+	}
+	return nil
 }
 
 func (u *Users) Update(id int, user *dto.UpdateUser) (*models.User, error) {
