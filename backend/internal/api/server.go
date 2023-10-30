@@ -38,9 +38,9 @@ func Start(db *sql.DB) error {
 	healthCheckController := controllers.NewHealthCheck()
 
 	app.Route("/api", func(router fiber.Router) {
-		routes.Todos(todosController, authController, router)
-		routes.Users(usersController, authController, router)
-		routes.Auth(authController, router)
+		routes.Todos(todosController, authService, router)
+		routes.Users(usersController, authService, router)
+		routes.Auth(authController, authService, router)
 	})
 	app.Get("/health-check", healthCheckController.HealthCheck)
 
