@@ -1,7 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { Home } from '../pages/home/Home';
 import { Login } from '../pages/login/Login';
-import { Root } from '../pages/root/Root';
+import { Root } from '../components/Root/Root';
 import { Signup } from '../pages/signup/Signup';
 import { Todos } from '../pages/todos/Todos';
 import { CreateTodo } from '../pages/todos/create/CreateTodo';

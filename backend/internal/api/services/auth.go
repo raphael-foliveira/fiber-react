@@ -5,6 +5,7 @@ import (
 	"github.com/raphael-foliveira/fiber-react/backend/internal/dto"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/errs"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/persistence/repositories"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Auth struct {
@@ -22,7 +23,7 @@ func (a *Auth) Login(credentials *dto.Login) (*dto.LoginResponse, error) {
 	if err != nil {
 		return nil, errs.HTTPError{Code: 401, Message: "invalid credentials"}
 	}
-	if user.Password != credentials.Password {
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(credentials.Password)); err != nil {
 		return nil, errs.HTTPError{Code: 401, Message: "invalid credentials"}
 	}
 	tokens, err := a.jwtService.GenerateTokens(&dto.User{
@@ -61,13 +62,19 @@ func (a *Auth) Signup(user *dto.CreateUser) (*dto.LoginResponse, error) {
 	if user.Password != user.ConfirmPassword {
 		return nil, errs.HTTPError{Code: 400, Message: "passwords do not match"}
 	}
+	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+	user.Password = string(hash)
 	newUser, err := a.usersService.Create(user)
 	if err != nil {
 		return nil, err
 	}
 	return a.Login(&dto.Login{
 		Email:    newUser.Email,
-		Password: newUser.Password,
+		Password: user.ConfirmPassword,
 	})
 }
 
