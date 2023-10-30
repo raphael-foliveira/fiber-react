@@ -1,6 +1,8 @@
 package services
 
 import (
+	"errors"
+
 	"github.com/raphael-foliveira/fiber-react/backend/internal/dto"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/errs"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/models"
@@ -24,7 +26,14 @@ func (t *Todos) Find() ([]*dto.Todo, error) {
 }
 
 func (t *Todos) FindOneById(id int) (*dto.TodoWithUser, error) {
-	return t.repository.FindOneById(id)
+	todo, err := t.repository.FindOneById(id)
+	if err != nil {
+		if errors.As(err, &errs.NotFoundError{}) {
+			return nil, errs.HTTPError{Code: 404, Message: "Todo not found"}
+		}
+		return nil, err
+	}
+	return todo, nil
 }
 
 func (t *Todos) FindByUserId(userId int) ([]*dto.Todo, error) {

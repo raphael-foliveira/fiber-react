@@ -7,6 +7,9 @@ import (
 	"github.com/raphael-foliveira/fiber-react/backend/internal/persistence/db"
 )
 
+// @title Todo API
+// @version 1.0
+// @BasePath /api
 func main() {
 	databaseUrl := os.Getenv("DATABASE_URL")
 	db, err := db.Connect(databaseUrl)

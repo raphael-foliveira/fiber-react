@@ -10,5 +10,6 @@ func Auth(controller *controllers.Auth, app fiber.Router) fiber.Router {
 		auth.Post("/login", controller.Login)
 		auth.Post("/signup", controller.Signup)
 		auth.Post("/refresh-token", controller.RefreshToken)
+		auth.Post("/logout", controller.Authenticate, controller.Logout)
 	})
 }
