@@ -1,9 +1,9 @@
 import { Box, Button, Card, Checkbox, Typography } from '@mui/material';
+import { green, red } from '@mui/material/colors';
 import { useState } from 'react';
 import { todosService } from '../../service/todosService';
 import { Todo } from '../../types/todos';
 import UpdateTodo from '../Forms/Todos/UpdateTodo';
-import { green, lightGreen, red } from '@mui/material/colors';
 
 interface SingleTodoProps {
   todo: Todo;
