@@ -20,7 +20,7 @@ func NewAuth(tokensRepository repositories.RefreshTokensRepository, usersService
 func (a *Auth) Login(credentials *dto.Login) (*dto.LoginResponse, error) {
 	user, err := a.usersService.FindOneByEmail(credentials.Email)
 	if err != nil {
-		return nil, err
+		return nil, errs.HTTPError{Code: 401, Message: "invalid credentials"}
 	}
 	if user.Password != credentials.Password {
 		return nil, errs.HTTPError{Code: 401, Message: "invalid credentials"}

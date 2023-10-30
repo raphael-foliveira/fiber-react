@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../contexts/authContext';
 import { ValidationError } from '../../../errors/ValidationError';
 import { authService } from '../../../service/authService';
-import { ButtonWrapper, FieldWrapper, FormCard } from '../styles';
+import { ButtonWrapper, FieldWrapper } from '../styles';
+import { FormCard } from '../FormCard';
 
 export default function SignupForm() {
   const [email, setEmail] = useState('');
@@ -43,7 +44,9 @@ export default function SignupForm() {
   return (
     <form action='' onSubmit={handleSubmit}>
       <FormCard>
-        <Typography variant='h4'>Cadastro</Typography>
+        <Typography variant='h4' sx={{ textAlign: 'center', marginBottom: 4 }}>
+          Cadastro
+        </Typography>
         <FieldWrapper>
           <TextField
             label='Nome de usuário'
