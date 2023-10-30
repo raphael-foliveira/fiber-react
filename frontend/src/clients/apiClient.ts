@@ -58,8 +58,11 @@ export const apiClient = {
 async function fetchWithConfig(endpoint: string, config: RequestInit = {}) {
   const response = await fetch(BASE_URL + endpoint, config);
   if (!response.ok) {
-    console.error(await response.json());
-    throw new HttpError(response.statusText, response.status);
+    throw new HttpError(
+      response.statusText,
+      response.status,
+      await response.json()
+    );
   }
   if (response.status === 204) {
     return;

@@ -73,11 +73,20 @@ func errorHandler(c *fiber.Ctx, err error) error {
 	code := fiber.StatusInternalServerError
 	var fiberErr *fiber.Error
 	var httpErr errs.HTTPError
+	var conflictErr errs.ConflictError
 	if errors.As(err, &fiberErr) {
 		code = fiberErr.Code
 	}
 	if errors.As(err, &httpErr) {
 		code = httpErr.Code
+	}
+	if errors.As(err, &conflictErr) {
+		c.Set(fiber.HeaderContentType, fiber.MIMETextPlainCharsetUTF8)
+		return c.Status(409).JSON(fiber.Map{
+			"error":  err.Error(),
+			"status": 409,
+			"field":  conflictErr.Field,
+		})
 	}
 	c.Set(fiber.HeaderContentType, fiber.MIMETextPlainCharsetUTF8)
 	return c.Status(code).JSON(fiber.Map{
