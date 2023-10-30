@@ -219,6 +219,11 @@ paths:
       - application/json
       description: Create todo
       parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Todo
         in: body
         name: todo
@@ -236,6 +241,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/errs.HTTPError'
+      security:
+      - BearerAuth: []
       summary: Create todo
       tags:
       - todos
@@ -245,6 +252,11 @@ paths:
       - application/json
       description: Delete todo
       parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Todo ID
         in: path
         name: id
@@ -295,6 +307,11 @@ paths:
       - application/json
       description: Update todo
       parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Todo ID
         in: path
         name: id
@@ -328,52 +345,6 @@ paths:
       summary: Update todo
       tags:
       - todos
-  /users:
-    get:
-      consumes:
-      - application/json
-      description: Find users
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/dto.User'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errs.HTTPError'
-      summary: Find users
-      tags:
-      - users
-    post:
-      consumes:
-      - application/json
-      description: Create user
-      parameters:
-      - description: User
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/dto.CreateUser'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/dto.User'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errs.HTTPError'
-      summary: Create user
-      tags:
-      - users
   /users/{id}:
     delete:
       consumes:
@@ -395,34 +366,6 @@ paths:
           schema:
             $ref: '#/definitions/errs.HTTPError'
       summary: Delete user
-      tags:
-      - users
-    get:
-      consumes:
-      - application/json
-      description: Find user by id
-      parameters:
-      - description: User ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.User'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errs.HTTPError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errs.HTTPError'
-      summary: Find user by id
       tags:
       - users
     put:

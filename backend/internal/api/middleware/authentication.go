@@ -1,11 +1,27 @@
-package controllers
+package middleware
 
 import (
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/raphael-foliveira/fiber-react/backend/internal/api/services"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/errs"
 )
+
+func Authenticate(authService *services.Auth) func(c *fiber.Ctx) error {
+	return func(c *fiber.Ctx) error {
+		token, err := parseAuthHeader(c)
+		if err != nil {
+			return err
+		}
+		user, err := authService.Authenticate(token)
+		if err != nil {
+			return err
+		}
+		c.Locals("user", user)
+		return c.Next()
+	}
+}
 
 func parseAuthHeader(c *fiber.Ctx) (string, error) {
 	headers := c.GetReqHeaders()

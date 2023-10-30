@@ -61,9 +61,11 @@ func (t *Todos) FindOneById(c *fiber.Ctx) error {
 // @Tags todos
 // @Accept json
 // @Produce json
+// @Param Authorization header string true "Bearer token"
 // @Param todo body dto.CreateTodo true "Todo"
 // @Success 201 {object} dto.Todo
 // @Failure 400 {object} errs.HTTPError
+// @Security BearerAuth
 // @Router /todos [post]
 func (t *Todos) Create(c *fiber.Ctx) error {
 	createTodo := dto.CreateTodo{}
@@ -85,12 +87,14 @@ func (t *Todos) Create(c *fiber.Ctx) error {
 // @Tags todos
 // @Accept json
 // @Produce json
+// @Param Authorization header string true "Bearer token"
 // @Param id path int true "Todo ID"
 // @Param todo body dto.UpdateTodo true "Todo"
 // @Success 200 {object} dto.Todo
 // @Failure 400 {object} errs.HTTPError
 // @Failure 403 {object} errs.HTTPError
 // @Failure 404 {object} errs.HTTPError
+// @Secutiry BearerAuth
 // @Router /todos/{id} [put]
 func (t *Todos) Update(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
@@ -115,9 +119,11 @@ func (t *Todos) Update(c *fiber.Ctx) error {
 // @Tags todos
 // @Accept json
 // @Produce json
+// @Param Authorization header string true "Bearer token"
 // @Param id path int true "Todo ID"
 // @Success 204
 // @Failure 400 {object} errs.HTTPError
+// @Secutiry BearerAuth
 // @Router /todos/{id} [delete]
 func (t *Todos) Delete(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")

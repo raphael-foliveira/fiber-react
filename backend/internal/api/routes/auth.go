@@ -5,11 +5,11 @@ import (
 	"github.com/raphael-foliveira/fiber-react/backend/internal/api/controllers"
 )
 
-func Auth(controller *controllers.Auth, app fiber.Router) fiber.Router {
+func Auth(controller *controllers.Auth, app fiber.Router, authMw func(*fiber.Ctx) error) fiber.Router {
 	return app.Route("/auth", func(auth fiber.Router) {
 		auth.Post("/login", controller.Login)
 		auth.Post("/signup", controller.Signup)
 		auth.Post("/refresh-token", controller.RefreshToken)
-		auth.Post("/logout", controller.Authenticate, controller.Logout)
+		auth.Post("/logout", authMw, controller.Logout)
 	})
 }

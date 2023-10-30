@@ -101,15 +101,4 @@ func (a *Auth) RefreshToken(c *fiber.Ctx) error {
 	return c.Status(200).JSON(token)
 }
 
-func (a *Auth) Authenticate(c *fiber.Ctx) error {
-	token, err := parseAuthHeader(c)
-	if err != nil {
-		return err
-	}
-	user, err := a.service.Authenticate(token)
-	if err != nil {
-		return err
-	}
-	c.Locals("user", user)
-	return c.Next()
-}
+
