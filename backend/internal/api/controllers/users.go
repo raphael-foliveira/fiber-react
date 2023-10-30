@@ -18,50 +18,6 @@ func NewUsers(service *services.Users, authService *services.Auth) *Users {
 	return &Users{service, authService}
 }
 
-// Find godoc
-// @Summary Find users
-// @Description Find users
-// @Tags users
-// @Accept json
-// @Produce json
-// @Success 200 {array} dto.User
-// @Failure 400 {object} errs.HTTPError
-// @Router /users [get]
-func (u *Users) Find(c *fiber.Ctx) error {
-	users, err := u.service.Find()
-	if err != nil {
-		return err
-	}
-	return c.Status(200).JSON(users)
-}
-
-// FindOneById godoc
-// @Summary Find user by id
-// @Description Find user by id
-// @Tags users
-// @Accept json
-// @Produce json
-// @Param id path int true "User ID"
-// @Success 200 {object} dto.User
-// @Failure 400 {object} errs.HTTPError
-// @Failure 404 {object} errs.HTTPError
-// @Router /users/{id} [get]
-func (u *Users) FindOneById(c *fiber.Ctx) error {
-	id, err := c.ParamsInt("id")
-	if err != nil {
-		return errs.HTTPError{Code: 400, Message: "Invalid id"}
-	}
-	user, err := u.service.FindOne(id)
-	if err != nil {
-		var notFoundErr errs.NotFoundError
-		if errors.As(err, &notFoundErr) {
-			return errs.HTTPError{Code: 404, Message: "User not found"}
-		}
-		return err
-	}
-	return c.Status(200).JSON(user)
-}
-
 // FindUserTodos godoc
 // @Summary Find user todos
 // @Description Find user todos
@@ -87,28 +43,6 @@ func (u *Users) FindUserTodos(c *fiber.Ctx) error {
 		return err
 	}
 	return c.Status(200).JSON(userTodos)
-}
-
-// Create godoc
-// @Summary Create user
-// @Description Create user
-// @Tags users
-// @Accept json
-// @Produce json
-// @Param user body dto.CreateUser true "User"
-// @Success 201 {object} dto.User
-// @Failure 400 {object} errs.HTTPError
-// @Router /users [post]
-func (u *Users) Create(c *fiber.Ctx) error {
-	userDto := dto.CreateUser{}
-	if err := c.BodyParser(&userDto); err != nil {
-		return err
-	}
-	user, err := u.service.Create(&userDto)
-	if err != nil {
-		return err
-	}
-	return c.Status(201).JSON(user)
 }
 
 // Update godoc

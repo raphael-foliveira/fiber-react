@@ -8,6 +8,11 @@ import { authService } from '../../../service/authService';
 import { FormCard } from '../FormCard';
 import { ButtonWrapper, FieldWrapper } from '../styles';
 
+const errMessages: Record<string, string> = {
+  email: 'Esse email já está cadastrado',
+  username: 'Esse nome de usuário já está cadastrado',
+};
+
 export default function SignupForm() {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
@@ -40,10 +45,7 @@ export default function SignupForm() {
       }
       if (err instanceof HttpError && err.status === 409) {
         const errJson = err.json as { field?: string };
-        const errMessages: Record<string, string> = {
-          email: 'Esse email já está cadastrado',
-          username: 'Esse nome de usuário já está cadastrado',
-        };
+
         setFormErrorMessage(errMessages[errJson.field || '']);
         return;
       }
