@@ -24,10 +24,12 @@ func NewUsers(service *services.Users, authService *services.Auth) *Users {
 // @Tags users
 // @Accept json
 // @Produce json
+// @Param Authorization header string true "Bearer token"
 // @Param id path int true "User ID"
 // @Success 200 {array} dto.Todo
 // @Failure 400 {object} errs.HTTPError
 // @Failure 404 {object} errs.HTTPError
+// @Security BearerAuth
 // @Router /users/{id}/todos [get]
 func (u *Users) FindUserTodos(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
@@ -51,10 +53,12 @@ func (u *Users) FindUserTodos(c *fiber.Ctx) error {
 // @Tags users
 // @Accept json
 // @Produce json
+// @Param Authorization header string true "Bearer token"
 // @Param id path int true "User ID"
 // @Param user body dto.UpdateUser true "User"
 // @Success 200 {object} dto.User
 // @Failure 400 {object} errs.HTTPError
+// @Security BearerAuth
 // @Router /users/{id} [put]
 func (u *Users) Update(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
@@ -78,9 +82,11 @@ func (u *Users) Update(c *fiber.Ctx) error {
 // @Tags users
 // @Accept json
 // @Produce json
+// @Param Authorization header string true "Bearer token"
 // @Param id path int true "User ID"
 // @Success 204
 // @Failure 400 {object} errs.HTTPError
+// @Security BearerAuth
 // @Router /users/{id} [delete]
 func (u *Users) Delete(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
