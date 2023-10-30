@@ -12,6 +12,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/api/controllers"
+	"github.com/raphael-foliveira/fiber-react/backend/internal/api/middleware"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/api/routes"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/api/services"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/errs"
@@ -32,15 +33,17 @@ func Start(db *sql.DB) error {
 	jwtService := services.NewJwt()
 	authService := services.NewAuth(refreshTokensRepository, usersService, jwtService)
 
+	authMiddleware := middleware.Authenticate(authService)
+
 	todosController := controllers.NewTodos(todosService)
 	usersController := controllers.NewUsers(usersService, authService)
 	authController := controllers.NewAuth(authService)
 	healthCheckController := controllers.NewHealthCheck()
 
 	app.Route("/api", func(router fiber.Router) {
-		routes.Todos(todosController, authService, router)
-		routes.Users(usersController, authService, router)
-		routes.Auth(authController, authService, router)
+		routes.Todos(todosController, router, authMiddleware)
+		routes.Users(usersController, router, authMiddleware)
+		routes.Auth(authController, router, authMiddleware)
 	})
 	app.Get("/health-check", healthCheckController.HealthCheck)
 
