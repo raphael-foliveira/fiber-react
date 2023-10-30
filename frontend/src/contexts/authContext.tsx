@@ -4,6 +4,7 @@ import { AuthContextProps, AuthData } from '../types/auth';
 export const AuthContext = createContext<AuthContextProps>({
   authData: { isLoggedIn: false, accessToken: '', refreshToken: '' },
   setAuthData: () => {},
+  clearAuthData: () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -12,6 +13,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     accessToken: '',
     refreshToken: '',
   });
+
+  const clearAuthData = () => {
+    setAuthData({ isLoggedIn: false, accessToken: '', refreshToken: '' });
+    localStorage.removeItem('user');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+  };
 
   useEffect(() => {
     const userString = localStorage.getItem('user');
@@ -30,7 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ authData, setAuthData }}>
+    <AuthContext.Provider value={{ authData, setAuthData, clearAuthData }}>
       {children}
     </AuthContext.Provider>
   );

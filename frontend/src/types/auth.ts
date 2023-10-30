@@ -24,6 +24,7 @@ export interface SignupProps extends LoginProps {
 export interface AuthContextProps {
   authData: AuthData;
   setAuthData: Dispatch<SetStateAction<AuthData>>;
+  clearAuthData: () => void;
 }
 
 export interface StoreAuthDataProps {

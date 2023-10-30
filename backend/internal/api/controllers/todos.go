@@ -46,7 +46,7 @@ func (t *Todos) Find(c *fiber.Ctx) error {
 func (t *Todos) FindOneById(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
-		return errs.HTTPError{Code: 400, Message: "Invalid id"}
+		return &errs.HTTPError{Code: 400, Message: "Invalid id"}
 	}
 	todo, err := t.service.FindOneById(id)
 	if err != nil {
@@ -99,7 +99,7 @@ func (t *Todos) Create(c *fiber.Ctx) error {
 func (t *Todos) Update(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
-		return errs.HTTPError{Code: 400, Message: "Invalid id"}
+		return &errs.HTTPError{Code: 400, Message: "Invalid id"}
 	}
 	updateTodo := dto.UpdateTodo{}
 	if err := c.BodyParser(&updateTodo); err != nil {
@@ -128,7 +128,7 @@ func (t *Todos) Update(c *fiber.Ctx) error {
 func (t *Todos) Delete(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
-		return errs.HTTPError{Code: 400, Message: "Invalid id"}
+		return &errs.HTTPError{Code: 400, Message: "Invalid id"}
 	}
 	user := c.Locals("user").(*dto.User)
 	if err := t.service.Delete(id, user.ID); err != nil {
@@ -141,10 +141,10 @@ func (t *Todos) checkOwner(c *fiber.Ctx, todoId int) error {
 	authenticatedUser := c.Locals("user").(*dto.User)
 	todo, err := t.service.FindOneById(todoId)
 	if err != nil {
-		return errs.HTTPError{Code: 404, Message: "Todo not found"}
+		return &errs.HTTPError{Code: 404, Message: "Todo not found"}
 	}
 	if todo.User.ID != authenticatedUser.ID {
-		return errs.HTTPError{Code: 403, Message: "You are not the owner of this todo"}
+		return &errs.HTTPError{Code: 403, Message: "You are not the owner of this todo"}
 	}
 	return nil
 }

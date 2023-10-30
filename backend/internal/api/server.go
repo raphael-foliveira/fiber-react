@@ -75,8 +75,8 @@ var appConfig = fiber.Config{
 func errorHandler(c *fiber.Ctx, err error) error {
 	code := fiber.StatusInternalServerError
 	var fiberErr *fiber.Error
-	var httpErr errs.HTTPError
-	var conflictErr errs.ConflictError
+	var httpErr *errs.HTTPError
+	var conflictErr *errs.ConflictError
 	if errors.As(err, &fiberErr) {
 		code = fiberErr.Code
 	}

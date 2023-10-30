@@ -77,7 +77,7 @@ func scanRefreshToken(row *sql.Row) (*models.RefreshToken, error) {
 	err := row.Scan(&token.ID, &token.Token, &token.UserID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, errs.NotFoundError{Message: "token not found"}
+			return nil, &errs.NotFoundError{Message: "token not found"}
 		}
 		return nil, err
 	}

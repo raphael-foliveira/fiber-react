@@ -51,7 +51,6 @@ func (a *Auth) Signup(c *fiber.Ctx) error {
 	if err := c.BodyParser(&user); err != nil {
 		return err
 	}
-
 	loginResponse, err := a.service.Signup(&user)
 	if err != nil {
 		return err

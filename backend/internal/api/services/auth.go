@@ -21,10 +21,10 @@ func NewAuth(tokensRepository repositories.RefreshTokensRepository, usersService
 func (a *Auth) Login(credentials *dto.Login) (*dto.LoginResponse, error) {
 	user, err := a.usersService.FindOneByEmail(credentials.Email)
 	if err != nil {
-		return nil, errs.HTTPError{Code: 401, Message: "invalid credentials"}
+		return nil, &errs.HTTPError{Code: 401, Message: "invalid credentials"}
 	}
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(credentials.Password)); err != nil {
-		return nil, errs.HTTPError{Code: 401, Message: "invalid credentials"}
+		return nil, &errs.HTTPError{Code: 401, Message: "invalid credentials"}
 	}
 	tokens, err := a.jwtService.GenerateTokens(&dto.User{
 		ID:       user.ID,
@@ -34,7 +34,7 @@ func (a *Auth) Login(credentials *dto.Login) (*dto.LoginResponse, error) {
 	_, err = a.tokensRepository.Upsert(tokens.RefreshToken, user.ID)
 	if err != nil {
 		log.Error(err)
-		return nil, errs.HTTPError{Code: 500, Message: "could not save refresh token"}
+		return nil, &errs.HTTPError{Code: 500, Message: "could not save refresh token"}
 	}
 	return &dto.LoginResponse{
 		AccessToken:  tokens.AccessToken,
@@ -53,14 +53,14 @@ func (a *Auth) Logout(token string, userId int) error {
 		return err
 	}
 	if authToken.UserID != userId {
-		return errs.HTTPError{Code: 401, Message: "invalid refresh token"}
+		return &errs.HTTPError{Code: 401, Message: "invalid refresh token"}
 	}
 	return a.tokensRepository.Delete(token)
 }
 
 func (a *Auth) Signup(user *dto.CreateUser) (*dto.LoginResponse, error) {
 	if user.Password != user.ConfirmPassword {
-		return nil, errs.HTTPError{Code: 400, Message: "passwords do not match"}
+		return nil, &errs.HTTPError{Code: 400, Message: "passwords do not match"}
 	}
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -81,14 +81,14 @@ func (a *Auth) Signup(user *dto.CreateUser) (*dto.LoginResponse, error) {
 func (a *Auth) RefreshToken(refreshToken *dto.RefreshToken) (*dto.RefreshTokenResponse, error) {
 	token, err := a.tokensRepository.FindOne(refreshToken.Token)
 	if err != nil {
-		return nil, errs.HTTPError{Code: 401, Message: "invalid refresh token"}
+		return nil, &errs.HTTPError{Code: 401, Message: "invalid refresh token"}
 	}
 	user, err := a.usersService.FindOne(token.UserID)
 	if err != nil {
 		return nil, err
 	}
 	if user.ID != token.UserID {
-		return nil, errs.HTTPError{Code: 401, Message: "invalid refresh token"}
+		return nil, &errs.HTTPError{Code: 401, Message: "invalid refresh token"}
 	}
 	accessToken, err := a.jwtService.GenerateAccessToken(&dto.User{
 		ID:       user.ID,

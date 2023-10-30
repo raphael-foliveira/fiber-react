@@ -9,25 +9,32 @@ const LoginForm = lazy(() => import('../../components/Forms/Login/Login'));
 
 export function Login() {
   useDocumentTitle('Login');
-  const { authData, setAuthData } = useContext(AuthContext);
+  const { authData, setAuthData, clearAuthData } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const handleAuthenticatedUser = async () => {
-      const { refreshToken, user } = authData;
-      if (refreshToken && user) {
-        const { accessToken } = await authService.refreshToken({
-          refreshToken,
-          userId: user.id,
-        });
-        setAuthData({
-          ...authData,
-          accessToken,
-        });
-        navigate('/todos');
+      try {
+        const { refreshToken, user } = authData;
+        if (refreshToken && user) {
+          const { accessToken } = await authService.refreshToken({
+            refreshToken,
+            userId: user.id,
+          });
+          setAuthData({
+            ...authData,
+            accessToken,
+          });
+          navigate('/todos');
+        }
+        setIsLoading(false);
+      } catch {
+        authService.logout();
+      } finally {
+        clearAuthData();
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
     handleAuthenticatedUser();
   }, []);
