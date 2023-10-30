@@ -44,7 +44,6 @@ export default function SignupForm() {
           email: 'Esse email já está cadastrado',
           username: 'Esse nome de usuário já está cadastrado',
         };
-        console.log({ errJson });
         setFormErrorMessage(errMessages[errJson.field || '']);
         return;
       }
