@@ -11,6 +11,7 @@ import (
 
 type RefreshTokensRepository interface {
 	FindOne(refreshToken string) (*models.RefreshToken, error)
+	FindOneByUserId(userID int) (*models.RefreshToken, error)
 	Upsert(refreshToken string, userID int) (*models.RefreshToken, error)
 	Delete(refreshToken string) error
 	DeleteByUserId(userID int) error
@@ -31,6 +32,17 @@ func (r *refreshTokens) FindOne(refreshToken string) (*models.RefreshToken, erro
 			refreshtokens
 		WHERE token = $1`,
 		refreshToken,
+	)
+	return scanRefreshToken(row)
+}
+
+func (r *refreshTokens) FindOneByUserId(userId int) (*models.RefreshToken, error) {
+	row := r.db.QueryRow(`
+		SELECT id, token, user_id
+		FROM 
+			refreshtokens
+		WHERE user_id = $1`,
+		userId,
 	)
 	return scanRefreshToken(row)
 }

@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -8,13 +9,14 @@ import (
 	"github.com/raphael-foliveira/fiber-react/backend/internal/errs"
 )
 
-func Authenticate(authService *services.Auth) func(c *fiber.Ctx) error {
+func Authorize(authService *services.Auth) func(c *fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 		token, err := parseAuthHeader(c)
 		if err != nil {
 			return err
 		}
-		user, err := authService.Authenticate(token)
+		fmt.Println(token)
+		user, err := authService.Authorize(token)
 		if err != nil {
 			return err
 		}

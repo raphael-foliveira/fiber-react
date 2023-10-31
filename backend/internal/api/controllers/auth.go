@@ -71,12 +71,8 @@ func (a *Auth) Signup(c *fiber.Ctx) error {
 // @Failure 401 {object} errs.HTTPError
 // @Router /auth/logout [post]
 func (a *Auth) Logout(c *fiber.Ctx) error {
-	refreshToken := dto.RefreshToken{}
-	if err := c.BodyParser(&refreshToken); err != nil {
-		return err
-	}
 	user := c.Locals("user").(*dto.User)
-	if err := a.service.Logout(refreshToken.Token, user.ID); err != nil {
+	if err := a.service.Logout(user.ID); err != nil {
 		return err
 	}
 	return c.SendStatus(204)

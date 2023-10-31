@@ -33,7 +33,7 @@ func Start(db *sql.DB) error {
 	jwtService := services.NewJwt()
 	authService := services.NewAuth(refreshTokensRepository, usersService, jwtService)
 
-	authMiddleware := middleware.Authenticate(authService)
+	authMiddleware := middleware.Authorize(authService)
 
 	todosController := controllers.NewTodos(todosService)
 	usersController := controllers.NewUsers(usersService, authService)

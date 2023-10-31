@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/dto"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/errs"
+	"github.com/raphael-foliveira/fiber-react/backend/internal/models"
 	"github.com/raphael-foliveira/fiber-react/backend/internal/persistence/repositories"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -19,13 +20,7 @@ func NewAuth(tokensRepository repositories.RefreshTokensRepository, usersService
 }
 
 func (a *Auth) Login(credentials *dto.Login) (*dto.LoginResponse, error) {
-	user, err := a.usersService.FindOneByEmail(credentials.Email)
-	if err != nil {
-		return nil, &errs.HTTPError{Code: 401, Message: "invalid credentials"}
-	}
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(credentials.Password)); err != nil {
-		return nil, &errs.HTTPError{Code: 401, Message: "invalid credentials"}
-	}
+	user, err := a.authenticate(credentials)
 	tokens, err := a.jwtService.GenerateTokens(&dto.User{
 		ID:       user.ID,
 		Email:    user.Email,
@@ -47,15 +42,12 @@ func (a *Auth) Login(credentials *dto.Login) (*dto.LoginResponse, error) {
 	}, nil
 }
 
-func (a *Auth) Logout(token string, userId int) error {
-	authToken, err := a.tokensRepository.FindOne(token)
+func (a *Auth) Logout(userId int) error {
+	authToken, err := a.tokensRepository.FindOneByUserId(userId)
 	if err != nil {
 		return err
 	}
-	if authToken.UserID != userId {
-		return &errs.HTTPError{Code: 401, Message: "invalid refresh token"}
-	}
-	return a.tokensRepository.Delete(token)
+	return a.tokensRepository.Delete(authToken.Token)
 }
 
 func (a *Auth) Signup(user *dto.CreateUser) (*dto.LoginResponse, error) {
@@ -103,10 +95,21 @@ func (a *Auth) RefreshToken(refreshToken *dto.RefreshToken) (*dto.RefreshTokenRe
 	}, nil
 }
 
-func (a *Auth) Authenticate(token string) (*dto.User, error) {
+func (a *Auth) Authorize(token string) (*dto.User, error) {
 	user, err := a.jwtService.ValidateToken(token, false)
 	if err != nil {
 		return nil, err
+	}
+	return user, nil
+}
+
+func (a *Auth) authenticate(credentials *dto.Login) (*models.User, error) {
+	user, err := a.usersService.FindOneByEmail(credentials.Email)
+	if err != nil {
+		return nil, &errs.HTTPError{Code: 401, Message: "invalid credentials"}
+	}
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(credentials.Password)); err != nil {
+		return nil, &errs.HTTPError{Code: 401, Message: "invalid credentials"}
 	}
 	return user, nil
 }

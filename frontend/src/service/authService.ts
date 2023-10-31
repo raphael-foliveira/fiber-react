@@ -48,8 +48,16 @@ export const authService = {
     return { accessToken: access_token };
   },
 
-  logout: async () => {
-    await apiClient.post('/auth/logout', {});
+  logout: async ({ accessToken }: { accessToken: string }) => {
+    await apiClient.post(
+      '/auth/logout',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
   },
 };
 
