@@ -1,14 +1,15 @@
 import { Dispatch, SetStateAction } from 'react';
 
 export interface AuthData {
-  user?: {
-    id: number;
-    email: string;
-    username: string;
-  };
+  user: AuthDataUser;
   accessToken: string;
   refreshToken: string;
   isLoggedIn: boolean;
+}
+export interface AuthDataUser {
+  id?: number;
+  email?: string;
+  username?: string;
 }
 
 export interface LoginProps {

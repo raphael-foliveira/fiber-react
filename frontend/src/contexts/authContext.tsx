@@ -2,7 +2,12 @@ import { createContext, useEffect, useState } from 'react';
 import { AuthContextProps, AuthData } from '../types/auth';
 
 export const AuthContext = createContext<AuthContextProps>({
-  authData: { isLoggedIn: false, accessToken: '', refreshToken: '' },
+  authData: {
+    isLoggedIn: false,
+    accessToken: '',
+    refreshToken: '',
+    user: {},
+  },
   setAuthData: () => {},
   clearAuthData: () => {},
 });
@@ -12,10 +17,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoggedIn: false,
     accessToken: '',
     refreshToken: '',
+    user: {},
   });
 
   const clearAuthData = () => {
-    setAuthData({ isLoggedIn: false, accessToken: '', refreshToken: '' });
+    setAuthData({
+      isLoggedIn: false,
+      accessToken: '',
+      refreshToken: '',
+      user: {},
+    });
     localStorage.removeItem('user');
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
@@ -31,7 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setAuthData({ user, accessToken, refreshToken, isLoggedIn: true });
         return;
       } finally {
-        setAuthData({ isLoggedIn: false, accessToken: '', refreshToken: '' });
+        clearAuthData();
       }
     }
   }, []);

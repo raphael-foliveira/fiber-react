@@ -15,9 +15,9 @@ export function Login() {
 
   useEffect(() => {
     const handleAuthenticatedUser = async () => {
+      const { refreshToken, user, accessToken } = authData;
       try {
-        const { refreshToken, user } = authData;
-        if (refreshToken && user) {
+        if (refreshToken && user.id) {
           const { accessToken } = await authService.refreshToken({
             refreshToken,
             userId: user.id,
@@ -28,11 +28,10 @@ export function Login() {
           });
           navigate('/todos');
         }
-        setIsLoading(false);
       } catch {
-        authService.logout();
-      } finally {
+        authService.logout({ accessToken });
         clearAuthData();
+      } finally {
         setIsLoading(false);
       }
     };

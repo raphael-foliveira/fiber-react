@@ -1,28 +1,12 @@
-import { useEffect, useState } from 'react';
-import { useSession } from '../../hooks/useSession';
-import { todosService } from '../../service/todosService';
-import { Todo } from '../../types/todos';
-import { SingleTodo } from './Todo';
 import { Box, Button, Container, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { useTodos } from '../../hooks/useTodos';
+import { SingleTodo } from './Todo';
+import { useSession } from '../../hooks/useSession';
 
 export default function TodosList() {
-  const { accessToken, user } = useSession();
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const fetchTodos = async (accessToken: string) => {
-    const todos = await todosService.getUserTodos(accessToken, user?.id);
-    setTodos(
-      todos.sort(
-        (a, b) =>
-          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-      )
-    );
-  };
-
-  useEffect(() => {
-    fetchTodos(accessToken!);
-  }, []);
-
+  const authData = useSession();
+  const { todos, fetchTodos } = useTodos({ authData });
   return (
     <>
       <Typography
@@ -56,7 +40,7 @@ export default function TodosList() {
             <SingleTodo
               todo={todo}
               updateTodos={fetchTodos}
-              accessToken={accessToken}
+              accessToken={authData.accessToken}
             />
           </Container>
         ))}
