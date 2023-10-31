@@ -1,36 +1,13 @@
-import { Suspense, lazy, useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Suspense, lazy } from 'react';
 import Loading from '../../components/Loading/Loading';
-import { AuthContext } from '../../contexts/authContext';
+import { useAuthenticatedUser } from '../../hooks/useAuthenticatedUser';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
-import { authService } from '../../service/authService';
 
 const LoginForm = lazy(() => import('../../components/Forms/Login/Login'));
 
 export function Login() {
   useDocumentTitle('Login');
-  const { authData, setAuthData } = useContext(AuthContext);
-  const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const handleAuthenticatedUser = async () => {
-      const { refreshToken, user } = authData;
-      if (refreshToken && user) {
-        const { accessToken } = await authService.refreshToken({
-          refreshToken,
-          userId: user.id,
-        });
-        setAuthData({
-          ...authData,
-          accessToken,
-        });
-        navigate('/todos');
-      }
-      setIsLoading(false);
-    };
-    handleAuthenticatedUser();
-  }, []);
+  const isLoading = useAuthenticatedUser();
 
   return (
     <>

@@ -2,8 +2,14 @@ import { createContext, useEffect, useState } from 'react';
 import { AuthContextProps, AuthData } from '../types/auth';
 
 export const AuthContext = createContext<AuthContextProps>({
-  authData: { isLoggedIn: false, accessToken: '', refreshToken: '' },
+  authData: {
+    isLoggedIn: false,
+    accessToken: '',
+    refreshToken: '',
+    user: {},
+  },
   setAuthData: () => {},
+  clearAuthData: () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -11,26 +17,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoggedIn: false,
     accessToken: '',
     refreshToken: '',
+    user: {},
   });
+
+  const clearAuthData = () => {
+    setAuthData({
+      isLoggedIn: false,
+      accessToken: '',
+      refreshToken: '',
+      user: {},
+    });
+    localStorage.removeItem('user');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+  };
 
   useEffect(() => {
     const userString = localStorage.getItem('user');
     const accessToken = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');
-    try {
-      if (userString && accessToken && refreshToken) {
+    if (userString && accessToken && refreshToken) {
+      try {
         const user = JSON.parse(userString);
         setAuthData({ user, accessToken, refreshToken, isLoggedIn: true });
         return;
+      } finally {
+        clearAuthData();
       }
-      setAuthData({ isLoggedIn: false, accessToken: '', refreshToken: '' });
-    } catch {
-      setAuthData({ isLoggedIn: false, accessToken: '', refreshToken: '' });
     }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ authData, setAuthData }}>
+    <AuthContext.Provider value={{ authData, setAuthData, clearAuthData }}>
       {children}
     </AuthContext.Provider>
   );

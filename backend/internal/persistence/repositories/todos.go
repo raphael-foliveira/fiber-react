@@ -131,7 +131,7 @@ func scanTodo(row *sql.Row) (*models.Todo, error) {
 		&todo.CreatedAt,
 		&todo.CompletedAt); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, errs.NotFoundError{Message: "todo not found"}
+			return nil, &errs.NotFoundError{Message: "todo not found"}
 		}
 		return nil, err
 	}
@@ -154,7 +154,7 @@ func scanTodoWithUser(row *sql.Row) (*dto.TodoWithUser, error) {
 		&todo.User.Username,
 	); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, errs.NotFoundError{Message: "todo not found"}
+			return nil, &errs.NotFoundError{Message: "todo not found"}
 		}
 		return nil, err
 	}

@@ -122,7 +122,7 @@ func scanUser(row *sql.Row) (*models.User, error) {
 	var user models.User
 	if err := row.Scan(&user.ID, &user.Email, &user.Username, &user.Password); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, errs.NotFoundError{Message: "user not found"}
+			return nil, &errs.NotFoundError{Message: "user not found"}
 		}
 		return nil, err
 	}

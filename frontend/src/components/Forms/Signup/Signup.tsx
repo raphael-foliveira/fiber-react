@@ -45,7 +45,6 @@ export default function SignupForm() {
       }
       if (err instanceof HttpError && err.status === 409) {
         const errJson = err.json as { field?: string };
-
         setFormErrorMessage(errMessages[errJson.field || '']);
         return;
       }

@@ -34,13 +34,13 @@ func NewUsers(service *services.Users, authService *services.Auth) *Users {
 func (u *Users) FindUserTodos(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
-		return errs.HTTPError{Code: 400, Message: "Invalid id"}
+		return &errs.HTTPError{Code: 400, Message: "Invalid id"}
 	}
 	userTodos, err := u.service.FindUserTodos(id)
 	if err != nil {
-		var notFoundErr errs.NotFoundError
+		var notFoundErr *errs.NotFoundError
 		if errors.As(err, &notFoundErr) {
-			return errs.HTTPError{Code: 404, Message: "User not found"}
+			return &errs.HTTPError{Code: 404, Message: "User not found"}
 		}
 		return err
 	}
@@ -63,7 +63,7 @@ func (u *Users) FindUserTodos(c *fiber.Ctx) error {
 func (u *Users) Update(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
-		return errs.HTTPError{Code: 400, Message: "Invalid id"}
+		return &errs.HTTPError{Code: 400, Message: "Invalid id"}
 	}
 	updateUser := dto.UpdateUser{}
 	if err := c.BodyParser(&updateUser); err != nil {
@@ -91,7 +91,7 @@ func (u *Users) Update(c *fiber.Ctx) error {
 func (u *Users) Delete(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
-		return errs.HTTPError{Code: 400, Message: "Invalid id"}
+		return &errs.HTTPError{Code: 400, Message: "Invalid id"}
 	}
 	err = u.service.Delete(id)
 	if err != nil {
