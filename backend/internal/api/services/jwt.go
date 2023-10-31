@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"os"
 	"time"
 
@@ -86,8 +85,6 @@ func (j *Jwt) ValidateToken(token string, isRefreshToken bool) (*dto.User, error
 	if !ok {
 		return nil, &errs.HTTPError{Code: 401, Message: "invalid token"}
 	}
-	fmt.Println(claims.Username)
-	fmt.Println(claims.Email)
 	return &dto.User{
 		ID:       claims.Sub,
 		Email:    claims.Email,
