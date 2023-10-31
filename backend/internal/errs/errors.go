@@ -5,17 +5,17 @@ type HTTPError struct {
 	Message string
 }
 
-func (httpErr HTTPError) Error() string { return httpErr.Message }
+func (httpErr *HTTPError) Error() string { return httpErr.Message }
 
 type NotFoundError struct {
 	Message string
 }
 
-func (notFoundErr NotFoundError) Error() string { return notFoundErr.Message }
+func (notFoundErr *NotFoundError) Error() string { return notFoundErr.Message }
 
 type ConflictError struct {
 	Message string
 	Field   string
 }
 
-func (conflictErr ConflictError) Error() string { return conflictErr.Message }
+func (conflictErr *ConflictError) Error() string { return conflictErr.Message }

@@ -39,7 +39,7 @@ export const todosService = {
       console.error(err);
       if (err instanceof HttpError) {
         if (err.status === 401) {
-          authService.logout();
+          authService.logout({ accessToken });
           throw new Error('Não autorizado');
         }
       }
@@ -61,7 +61,7 @@ export const todosService = {
     } catch (err) {
       if (err instanceof HttpError) {
         if (err.status === 401 || err.status === 403) {
-          authService.logout();
+          authService.logout({ accessToken });
           throw new Error('Não autorizado');
         }
         if (err.status === 400 || err.status === 422) {
@@ -81,10 +81,9 @@ export const todosService = {
         headers: { Authorization: 'Bearer ' + accessToken },
       });
     } catch (err) {
-      console.log(err);
       if (err instanceof HttpError) {
         if (err.status === 401 || err.status === 403) {
-          authService.logout();
+          authService.logout({ accessToken });
           throw new Error('Não autorizado');
         }
       }

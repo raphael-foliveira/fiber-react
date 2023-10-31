@@ -28,8 +28,9 @@ func (t *Todos) Find() ([]*dto.Todo, error) {
 func (t *Todos) FindOneById(id int) (*dto.TodoWithUser, error) {
 	todo, err := t.repository.FindOneById(id)
 	if err != nil {
-		if errors.As(err, &errs.NotFoundError{}) {
-			return nil, errs.HTTPError{Code: 404, Message: "Todo not found"}
+		var errNotFound *errs.NotFoundError
+		if errors.As(err, &errNotFound) {
+			return nil, &errs.HTTPError{Code: 404, Message: "Todo not found"}
 		}
 		return nil, err
 	}
@@ -67,10 +68,10 @@ func (t *Todos) Delete(id, userId int) error {
 func (t *Todos) checkOwner(userId, todoId int) error {
 	todo, err := t.FindOneById(todoId)
 	if err != nil {
-		return errs.HTTPError{Code: 404, Message: "Todo not found"}
+		return &errs.HTTPError{Code: 404, Message: "Todo not found"}
 	}
 	if todo.User.ID != userId {
-		return errs.HTTPError{Code: 403, Message: "You are not the owner of this todo"}
+		return &errs.HTTPError{Code: 403, Message: "You are not the owner of this todo"}
 	}
 	return nil
 }

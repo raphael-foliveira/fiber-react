@@ -126,6 +126,37 @@ paths:
       summary: Login
       tags:
       - auth
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Logout
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Refresh Token
+        in: body
+        name: refreshToken
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RefreshToken'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errs.HTTPError'
+      security:
+      - BearerAuth: []
+      summary: Logout
+      tags:
+      - auth
   /auth/refresh-token:
     post:
       consumes:
@@ -194,26 +225,6 @@ paths:
       tags:
       - health_check
   /todos:
-    get:
-      consumes:
-      - application/json
-      description: Find todos
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/dto.Todo'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errs.HTTPError'
-      summary: Find todos
-      tags:
-      - todos
     post:
       consumes:
       - application/json
@@ -274,34 +285,6 @@ paths:
       security:
       - BearerAuth: []
       summary: Delete todo
-      tags:
-      - todos
-    get:
-      consumes:
-      - application/json
-      description: Find todo by id
-      parameters:
-      - description: Todo ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.Todo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errs.HTTPError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/errs.HTTPError'
-      summary: Find todo by id
       tags:
       - todos
     put:

@@ -48,11 +48,16 @@ export const authService = {
     return { accessToken: access_token };
   },
 
-  logout: async () => {
-    await apiClient.post('/auth/logout', {});
-    localStorage.removeItem('user');
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+  logout: async ({ accessToken }: { accessToken: string }) => {
+    await apiClient.post(
+      '/auth/logout',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
   },
 };
 
@@ -64,9 +69,6 @@ function validateSignupCredentials({
 }: SignupProps) {
   if (password !== confirmPassword) {
     throw new ValidationError('As senhas não coincidem');
-  }
-  if (password.length < 8) {
-    throw new ValidationError('Senhas devem ter pelo menos 8 caracteres');
   }
   if (email.length < 6) {
     throw new ValidationError('Email inválido');

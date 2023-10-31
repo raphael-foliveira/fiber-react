@@ -51,7 +51,6 @@ func (a *Auth) Signup(c *fiber.Ctx) error {
 	if err := c.BodyParser(&user); err != nil {
 		return err
 	}
-
 	loginResponse, err := a.service.Signup(&user)
 	if err != nil {
 		return err
@@ -65,16 +64,15 @@ func (a *Auth) Signup(c *fiber.Ctx) error {
 // @Tags auth
 // @Accept json
 // @Produce json
+// @Param Authorization header string true "Bearer token"
 // @Param refreshToken body dto.RefreshToken true "Refresh Token"
 // @Success 204
+// @Security BearerAuth
 // @Failure 401 {object} errs.HTTPError
+// @Router /auth/logout [post]
 func (a *Auth) Logout(c *fiber.Ctx) error {
-	refreshToken := dto.RefreshToken{}
-	if err := c.BodyParser(&refreshToken); err != nil {
-		return err
-	}
 	user := c.Locals("user").(*dto.User)
-	if err := a.service.Logout(refreshToken.Token, user.ID); err != nil {
+	if err := a.service.Logout(user.ID); err != nil {
 		return err
 	}
 	return c.SendStatus(204)

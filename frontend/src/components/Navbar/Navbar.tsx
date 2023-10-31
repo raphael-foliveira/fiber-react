@@ -2,15 +2,16 @@ import { AppBar, Button, Toolbar, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../../contexts/authContext';
+import { authService } from '../../service/authService';
 
 export default function Navbar() {
-  const { authData, setAuthData } = useContext(AuthContext);
+  const { authData, clearAuthData } = useContext(AuthContext);
 
   const handleLogout = () => {
-    setAuthData({ isLoggedIn: false, accessToken: '', refreshToken: '' });
-    localStorage.removeItem('user');
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    authService.logout({
+      accessToken: authData.accessToken,
+    });
+    clearAuthData();
   };
 
   return (
