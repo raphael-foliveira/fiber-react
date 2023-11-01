@@ -49,7 +49,6 @@ func Start(db *sql.DB) error {
 
 	app.Static("/", "web")
 	app.Get("/*", func(c *fiber.Ctx) error {
-		fmt.Println("running")
 		return c.SendFile("./web/index.html")
 	})
 
@@ -84,14 +83,12 @@ func errorHandler(c *fiber.Ctx, err error) error {
 		code = httpErr.Code
 	}
 	if errors.As(err, &conflictErr) {
-		c.Set(fiber.HeaderContentType, fiber.MIMETextPlainCharsetUTF8)
 		return c.Status(409).JSON(fiber.Map{
 			"error":  err.Error(),
 			"status": 409,
 			"field":  conflictErr.Field,
 		})
 	}
-	c.Set(fiber.HeaderContentType, fiber.MIMETextPlainCharsetUTF8)
 	return c.Status(code).JSON(fiber.Map{
 		"error":  err.Error(),
 		"status": code,
