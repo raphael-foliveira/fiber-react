@@ -69,12 +69,14 @@ func (j *Jwt) GenerateRefreshToken(user *dto.User) (string, error) {
 }
 
 func (j *Jwt) ValidateToken(token string, isRefreshToken bool) (*dto.User, error) {
-	parsedToken, err := jwt.ParseWithClaims(token, &JwtClaims{}, func(token *jwt.Token) (interface{}, error) {
-		if isRefreshToken {
-			return refreshJwtSecret, nil
-		}
-		return accessJwtSecret, nil
-	})
+	parsedToken, err := jwt.ParseWithClaims(
+		token, &JwtClaims{},
+		func(token *jwt.Token) (interface{}, error) {
+			if isRefreshToken {
+				return refreshJwtSecret, nil
+			}
+			return accessJwtSecret, nil
+		})
 	if err != nil {
 		return nil, err
 	}

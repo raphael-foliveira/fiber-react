@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -15,7 +14,6 @@ func Authorize(authService *services.Auth) func(c *fiber.Ctx) error {
 		if err != nil {
 			return err
 		}
-		fmt.Println(token)
 		user, err := authService.Authorize(token)
 		if err != nil {
 			return err
