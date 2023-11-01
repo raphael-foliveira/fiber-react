@@ -4,7 +4,7 @@ import { Outlet } from 'react-router-dom';
 
 export function Root() {
   return (
-    <Box sx={{ backgroundColor: 'background.paper', height: '100vh' }}>
+    <Box>
       <Navbar />
       <Outlet />
     </Box>

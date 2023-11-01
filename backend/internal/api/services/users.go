@@ -72,11 +72,17 @@ func (u *Users) Create(user *dto.CreateUser) (*models.User, error) {
 func (u *Users) checkConflicts(user *dto.CreateUser) error {
 	_, err := u.repository.FindOneByEmail(user.Email)
 	if err == nil {
-		return &errs.ConflictError{Message: "Email already in use", Field: "email"}
+		return &errs.ConflictError{
+			Message: "Email already in use",
+			Field:   "email",
+		}
 	}
 	_, err = u.repository.FindOneByUsername(user.Username)
 	if err == nil {
-		return &errs.ConflictError{Message: "Username already in use", Field: "username"}
+		return &errs.ConflictError{
+			Message: "Username already in use",
+			Field:   "username",
+		}
 	}
 	return nil
 }
