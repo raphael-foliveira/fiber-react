@@ -15,6 +15,7 @@ export function Signup() {
   useEffect(() => {
     if (authData.isLoggedIn) {
       navigate('/todos');
+      return;
     }
     setLoading(false);
   }, []);
