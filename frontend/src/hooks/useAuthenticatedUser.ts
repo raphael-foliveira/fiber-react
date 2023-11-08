@@ -9,31 +9,32 @@ export function useAuthenticatedUser() {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const handleAuthenticatedUser = async ({
-      refreshToken,
-      user,
-      accessToken,
-    }: AuthData) => {
-      try {
-        if (refreshToken && user.id) {
-          const { accessToken } = await authService.refreshToken({
-            refreshToken,
-            userId: user.id,
-          });
-          setAuthData({
-            ...authData,
-            accessToken,
-          });
-          navigate('/todos');
-        }
-      } catch {
-        authService.logout({ accessToken });
-        clearAuthData();
-      } finally {
-        setIsLoading(false);
+  const handleAuthenticatedUser = async ({
+    refreshToken,
+    user,
+    accessToken,
+  }: AuthData) => {
+    try {
+      if (refreshToken && user.id) {
+        const { accessToken } = await authService.refreshToken({
+          refreshToken,
+          userId: user.id,
+        });
+        setAuthData({
+          ...authData,
+          accessToken,
+        });
+        navigate('/todos');
       }
-    };
+    } catch {
+      authService.logout({ accessToken });
+      clearAuthData();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     handleAuthenticatedUser(authData);
   }, []);
 

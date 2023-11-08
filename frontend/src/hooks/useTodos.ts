@@ -6,6 +6,7 @@ import { Todo } from '../types/todos';
 export function useTodos({ authData }: { authData: AuthData }) {
   const { user, accessToken } = authData;
   const [todos, setTodos] = useState<Todo[]>([]);
+
   const fetchTodos = async (accessToken: string) => {
     const todos = await todosService.getUserTodos(accessToken, user?.id);
     setTodos(
@@ -20,5 +21,5 @@ export function useTodos({ authData }: { authData: AuthData }) {
     fetchTodos(accessToken!);
   }, []);
 
-  return { todos, fetchTodos, accessToken };
+  return { todos, fetchTodos };
 }
