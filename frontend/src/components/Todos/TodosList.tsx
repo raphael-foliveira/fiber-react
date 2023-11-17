@@ -1,12 +1,29 @@
 import { Box, Button, Container, Typography } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { useTodos } from '../../hooks/useTodos';
-import { SingleTodo } from './Todo';
 import { useSession } from '../../hooks/useSession';
+import { todosService } from '../../service/todosService';
+import { SingleTodo } from './Todo';
+import Loading from '../Loading/Loading';
 
 export default function TodosList() {
   const authData = useSession();
-  const { todos, fetchTodos } = useTodos({ authData });
+  const fetchTodos = async () => {
+    return todosService.getUserTodos(authData.accessToken, authData.user.id);
+  };
+
+  const query = useQuery({
+    queryKey: ['todos'],
+    queryFn: fetchTodos,
+  });
+  if (query.error) {
+    return <h1>Something went wrong</h1>;
+  }
+
+  if (query.isLoading) {
+    return <Loading />;
+  }
+
   return (
     <>
       <Typography
@@ -23,7 +40,7 @@ export default function TodosList() {
         </Link>
       </Box>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', padding: '0 5rem' }}>
-        {todos.map((todo) => (
+        {query.data?.map((todo) => (
           <Container
             key={todo.id}
             sx={{

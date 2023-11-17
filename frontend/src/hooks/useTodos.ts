@@ -9,12 +9,7 @@ export function useTodos({ authData }: { authData: AuthData }) {
 
   const fetchTodos = async (accessToken: string) => {
     const todos = await todosService.getUserTodos(accessToken, user?.id);
-    setTodos(
-      todos.sort(
-        (a, b) =>
-          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-      )
-    );
+    setTodos(todos);
   };
 
   useEffect(() => {

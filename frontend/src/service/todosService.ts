@@ -31,10 +31,13 @@ export const todosService = {
     userId: number = 0
   ): Promise<Todo[]> => {
     try {
-      const response = await apiClient.get(`/users/${userId}/todos`, {
+      const response: Todo[] = await apiClient.get(`/users/${userId}/todos`, {
         headers: { Authorization: 'Bearer ' + accessToken },
       });
-      return response;
+      return response.sort(
+        (a, b) =>
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      );
     } catch (err) {
       console.error(err);
       if (err instanceof HttpError) {
