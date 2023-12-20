@@ -34,3 +34,4 @@ services:
       - ./frontend/src:/app/src
     depends_on:
       - backend
+    command: npm run dev
