@@ -23,7 +23,6 @@ services:
       - ./backend:/app
     depends_on:
       - database
-    command: make dev
 
   frontend:
     build: ./frontend

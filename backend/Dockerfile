@@ -12,4 +12,4 @@ RUN go get ./...
 
 RUN make build
 
-CMD ["./bin", "main"]
+CMD ["./bin/main"]
