@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { todosService } from '../../service/todosService';
 import { Todo } from '../../types/todos';
 import UpdateTodo from '../Forms/Todos/UpdateTodo';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface SingleTodoProps {
   todo: Todo;
@@ -16,21 +17,34 @@ export function SingleTodo({
   updateTodos,
   accessToken,
 }: SingleTodoProps) {
-  const [todoState, setTodoState] = useState(todo);
+  const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
 
   const handleCompleteTodo = async () => {
-    const response = await todosService.updateTodo(accessToken, {
-      ...todoState,
-      completed: !todoState.completed,
+    await todosService.updateTodo(accessToken, {
+      ...todo,
+      completed: !todo.completed,
     });
-    setTodoState({ ...todoState, completed: response.completed });
   };
 
+  const completeMutation = useMutation({
+    mutationFn: handleCompleteTodo,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['todos'] });
+    },
+  });
+
   const handleDeleteTodo = async () => {
-    await todosService.deleteTodo(accessToken, todoState.id);
+    await todosService.deleteTodo(accessToken, todo.id);
     updateTodos(accessToken);
   };
+
+  const deleteMutation = useMutation({
+    mutationFn: handleDeleteTodo,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['todos'] });
+    },
+  });
 
   return (
     <Card
@@ -41,28 +55,26 @@ export function SingleTodo({
         height: '400px',
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: todoState.completed ? green[100] : red[100],
+        backgroundColor: todo.completed ? green[100] : red[100],
       }}
     >
       {isEditing ? (
-        <UpdateTodo
-          todo={todoState}
-          setTodoState={setTodoState}
-          setIsEditing={setIsEditing}
-        />
+        <UpdateTodo todo={todo} setIsEditing={setIsEditing} />
       ) : (
         <>
           <Typography variant='h4' textAlign={'center'}>
-            {todoState.title}
+            {todo.title}
           </Typography>
           <Box padding={4}>
-            <Typography>{todoState.description}</Typography>
+            <Typography>{todo.description}</Typography>
           </Box>
           <Typography textAlign={'right'} marginTop={'auto'}>
             Feito:{' '}
             <Checkbox
-              checked={todoState.completed}
-              onClick={handleCompleteTodo}
+              checked={todo.completed}
+              onClick={() => {
+                completeMutation.mutate();
+              }}
             />
           </Typography>
           <Box
@@ -72,7 +84,12 @@ export function SingleTodo({
             }}
           >
             <Button onClick={() => setIsEditing(true)}>Editar</Button>
-            <Button color='error' onClick={handleDeleteTodo}>
+            <Button
+              color='error'
+              onClick={() => {
+                deleteMutation.mutate();
+              }}
+            >
               Apagar
             </Button>
           </Box>

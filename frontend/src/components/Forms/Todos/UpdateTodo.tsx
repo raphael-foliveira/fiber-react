@@ -1,36 +1,31 @@
-import { Typography, TextField, Button } from '@mui/material';
-import { useState, FormEventHandler, Dispatch, SetStateAction } from 'react';
+import { Button, TextField, Typography } from '@mui/material';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { useSession } from '../../../hooks/useSession';
 import { todosService } from '../../../service/todosService';
 import { Todo } from '../../../types/todos';
-import { FieldWrapper, ButtonWrapper } from '../styles';
+import { ButtonWrapper, FieldWrapper } from '../styles';
 
 interface UpdateTodoProps {
   todo: Todo;
-  setTodoState: Dispatch<SetStateAction<Todo>>;
   setIsEditing: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function UpdateTodo({
-  todo,
-  setTodoState,
-  setIsEditing,
-}: UpdateTodoProps) {
+export default function UpdateTodo({ todo, setIsEditing }: UpdateTodoProps) {
+  const queryClient = useQueryClient();
   const { accessToken } = useSession();
   const [title, setTitle] = useState(todo.title);
   const [description, setDescription] = useState(todo.description);
   const [formError, setFormError] = useState(false);
   const [formErrorMessage, setFormErrorMessage] = useState('');
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     try {
-      const response = await todosService.updateTodo(accessToken, {
+      await todosService.updateTodo(accessToken, {
         ...todo,
         title,
         description,
       });
-      setTodoState(response);
       setIsEditing(false);
     } catch (err) {
       setFormError(true);
@@ -42,8 +37,21 @@ export default function UpdateTodo({
     }
   };
 
+  const mutation = useMutation({
+    mutationFn: handleSubmit,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['todos'] });
+    },
+  });
+
   return (
-    <form action='' onSubmit={handleSubmit}>
+    <form
+      action=''
+      onSubmit={(e) => {
+        e.preventDefault();
+        mutation.mutate();
+      }}
+    >
       <Typography variant='h4' sx={{ marginBottom: 4 }}>
         Atualizar tarefa
       </Typography>
