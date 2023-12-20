@@ -10,4 +10,6 @@ COPY . .
 
 RUN go get ./...
 
-CMD ["make", "dev"]
+RUN make build
+
+CMD ["./bin", "main"]
