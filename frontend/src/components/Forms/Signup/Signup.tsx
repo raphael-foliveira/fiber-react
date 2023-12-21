@@ -1,5 +1,6 @@
 import { Button, TextField, Typography } from '@mui/material';
-import { FormEventHandler, useContext, useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../contexts/authContext';
 import { HttpError } from '../../../errors/HttpError';
@@ -21,39 +22,47 @@ export default function SignupForm() {
   const [formError, setFormError] = useState(false);
   const [formErrorMessage, setFormErrorMessage] = useState('');
   const { setAuthData } = useContext(AuthContext);
+
   const navigate = useNavigate();
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault();
-    setFormError(false);
-    setFormErrorMessage('');
-    try {
-      const authResponse = await authService.signup({
-        email,
-        username,
-        password,
-        confirm_password: confirmPassword,
-      });
-      setAuthData(authResponse);
-      navigate('/login');
-    } catch (err) {
-      console.error({ err });
-      setFormError(true);
-      if (err instanceof ValidationError) {
-        setFormErrorMessage(err.message);
-        return;
+  const mutation = useMutation({
+    mutationFn: async () => {
+      setFormError(false);
+      setFormErrorMessage('');
+      try {
+        const authResponse = await authService.signup({
+          email,
+          username,
+          password,
+          confirm_password: confirmPassword,
+        });
+        setAuthData(authResponse);
+        navigate('/login');
+      } catch (err) {
+        console.error({ err });
+        setFormError(true);
+        if (err instanceof ValidationError) {
+          setFormErrorMessage(err.message);
+          return;
+        }
+        if (err instanceof HttpError && err.status === 409) {
+          const errJson = err.json as { field?: string };
+          setFormErrorMessage(errMessages[errJson.field || '']);
+          return;
+        }
+        setFormErrorMessage('Erro ao cadastrar. Tente novamente.');
       }
-      if (err instanceof HttpError && err.status === 409) {
-        const errJson = err.json as { field?: string };
-        setFormErrorMessage(errMessages[errJson.field || '']);
-        return;
-      }
-      setFormErrorMessage('Erro ao cadastrar. Tente novamente.');
-    }
-  };
+    },
+  });
 
   return (
-    <form action='' onSubmit={handleSubmit}>
+    <form
+      action=''
+      onSubmit={(e) => {
+        e.preventDefault();
+        mutation.mutate();
+      }}
+    >
       <FormCard>
         <Typography variant='h4' sx={{ textAlign: 'center', marginBottom: 4 }}>
           Cadastro

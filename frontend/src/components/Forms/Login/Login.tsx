@@ -1,10 +1,11 @@
 import { Button, TextField, Typography } from '@mui/material';
-import { FormEventHandler, useContext, useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { authService } from '../../../service/authService';
-import { ButtonWrapper, FieldWrapper } from '../styles';
-import { FormCard } from '../FormCard';
 import { AuthContext } from '../../../contexts/authContext';
+import { authService } from '../../../service/authService';
+import { FormCard } from '../FormCard';
+import { ButtonWrapper, FieldWrapper } from '../styles';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
@@ -12,21 +13,27 @@ export default function LoginForm() {
   const [formError, setFormError] = useState(false);
   const { setAuthData } = useContext(AuthContext);
   const navigate = useNavigate();
-
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
-    event.preventDefault();
-    try {
-      const loginResponse = await authService.login({ email, password });
-      setAuthData(loginResponse);
-      navigate('/todos');
-    } catch (e) {
-      setFormError(true);
-      return;
-    }
-  };
+  const mutation = useMutation({
+    mutationFn: async () => {
+      try {
+        const loginResponse = await authService.login({ email, password });
+        setAuthData(loginResponse);
+        navigate('/todos');
+      } catch (e) {
+        setFormError(true);
+        return;
+      }
+    },
+  });
 
   return (
-    <form action='' onSubmit={handleSubmit}>
+    <form
+      action=''
+      onSubmit={(e) => {
+        e.preventDefault();
+        mutation.mutate();
+      }}
+    >
       <FormCard>
         <Typography variant='h4' sx={{ textAlign: 'center', marginBottom: 4 }}>
           Login
