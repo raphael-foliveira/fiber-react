@@ -9,38 +9,28 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 interface SingleTodoProps {
   todo: Todo;
   accessToken: string;
-  updateTodos: (accessToken: string) => void;
 }
 
-export function SingleTodo({
-  todo,
-  updateTodos,
-  accessToken,
-}: SingleTodoProps) {
+export function SingleTodo({ todo, accessToken }: SingleTodoProps) {
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleCompleteTodo = async () => {
-    await todosService.updateTodo(accessToken, {
-      ...todo,
-      completed: !todo.completed,
-    });
-  };
-
   const completeMutation = useMutation({
-    mutationFn: handleCompleteTodo,
+    mutationFn: async () => {
+      await todosService.updateTodo(accessToken, {
+        ...todo,
+        completed: !todo.completed,
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
     },
   });
 
-  const handleDeleteTodo = async () => {
-    await todosService.deleteTodo(accessToken, todo.id);
-    updateTodos(accessToken);
-  };
-
   const deleteMutation = useMutation({
-    mutationFn: handleDeleteTodo,
+    mutationFn: async () => {
+      await todosService.deleteTodo(accessToken, todo.id);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
     },

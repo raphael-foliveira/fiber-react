@@ -19,26 +19,24 @@ export default function UpdateTodo({ todo, setIsEditing }: UpdateTodoProps) {
   const [formError, setFormError] = useState(false);
   const [formErrorMessage, setFormErrorMessage] = useState('');
 
-  const handleSubmit = async () => {
-    try {
-      await todosService.updateTodo(accessToken, {
-        ...todo,
-        title,
-        description,
-      });
-      setIsEditing(false);
-    } catch (err) {
-      setFormError(true);
-      if (err instanceof Error) {
-        setFormErrorMessage(err.message);
-        return;
-      }
-      setFormErrorMessage('Erro desconhecido');
-    }
-  };
-
   const mutation = useMutation({
-    mutationFn: handleSubmit,
+    mutationFn: async () => {
+      try {
+        await todosService.updateTodo(accessToken, {
+          ...todo,
+          title,
+          description,
+        });
+        setIsEditing(false);
+      } catch (err) {
+        setFormError(true);
+        if (err instanceof Error) {
+          setFormErrorMessage(err.message);
+          return;
+        }
+        setFormErrorMessage('Erro desconhecido');
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
     },

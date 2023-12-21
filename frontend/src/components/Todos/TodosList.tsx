@@ -8,13 +8,12 @@ import Loading from '../Loading/Loading';
 
 export default function TodosList() {
   const authData = useSession();
-  const fetchTodos = async () => {
-    return todosService.getUserTodos(authData.accessToken, authData.user.id);
-  };
 
   const query = useQuery({
     queryKey: ['todos'],
-    queryFn: fetchTodos,
+    queryFn: async () => {
+      return todosService.getUserTodos(authData.accessToken, authData.user.id);
+    },
   });
   if (query.error) {
     return <h1>Something went wrong</h1>;
@@ -54,11 +53,7 @@ export default function TodosList() {
               justifyContent: 'center',
             }}
           >
-            <SingleTodo
-              todo={todo}
-              updateTodos={fetchTodos}
-              accessToken={authData.accessToken}
-            />
+            <SingleTodo todo={todo} accessToken={authData.accessToken} />
           </Container>
         ))}
       </Box>
