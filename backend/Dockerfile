@@ -10,6 +10,6 @@ COPY . .
 
 RUN go get ./...
 
-RUN make build
+RUN go build -o ./bin/main ./cmd/app
 
-CMD ["./bin/main"]
+CMD ["go", "run", "./cmd/app"]
