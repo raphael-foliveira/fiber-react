@@ -20,9 +20,9 @@ export default function CreateTodoForm({
     e.preventDefault();
     setFormError(false);
     setFormErrorMessage('');
-    navigate('/todos');
     try {
       await todosService.createTodo({ title, description }, accessToken);
+      navigate('/todos');
     } catch (err) {
       setFormError(true);
       if (err instanceof Error) {

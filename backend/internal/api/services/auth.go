@@ -21,11 +21,17 @@ func NewAuth(tokensRepository repositories.RefreshTokensRepository, usersService
 
 func (a *Auth) Login(credentials *dto.Login) (*dto.LoginResponse, error) {
 	user, err := a.authenticate(credentials)
+	if err != nil {
+		return nil, err
+	}
 	tokens, err := a.jwtService.GenerateTokens(&dto.User{
 		ID:       user.ID,
 		Email:    user.Email,
 		Username: user.Username,
 	})
+	if err != nil {
+		return nil, err
+	}
 	_, err = a.tokensRepository.Upsert(tokens.RefreshToken, user.ID)
 	if err != nil {
 		log.Error(err)
