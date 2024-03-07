@@ -21,7 +21,7 @@ type refreshTokens struct {
 	db *sql.DB
 }
 
-func NewRefreshTokens(db *sql.DB) RefreshTokensRepository {
+func NewRefreshTokens(db *sql.DB) *refreshTokens {
 	return &refreshTokens{db}
 }
 
