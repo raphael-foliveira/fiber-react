@@ -22,7 +22,7 @@ type todos struct {
 	db *sql.DB
 }
 
-func NewTodos(db *sql.DB) TodosRepository {
+func NewTodos(db *sql.DB) *todos {
 	return &todos{db}
 }
 
